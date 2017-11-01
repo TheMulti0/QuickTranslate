@@ -4,19 +4,30 @@ using System.Threading;
 using GoogleTranslate.Checkers;
 using GoogleTranslate.Enums;
 using GoogleTranslate.Exceptions;
+using GoogleTranslate.Implementations;
 using GoogleTranslate.Words;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Internal;
-using OpenQA.Selenium.Remote;
 
 namespace GoogleTranslate.Translators
 {
-    public class SeleniumClassicGoogleTranslator : ITranslator<TranslateLanguages, RemoteWebDriver>
+    public class SeleniumClassicGoogleTranslator : ITranslator
     {
+        private readonly ErrorChecker _errorChecker;
+        private readonly int _maxMethodLoop;
+        private int _detectCounter;
+        private int _translateCounter;
+
+        public SeleniumClassicGoogleTranslator(int maxMethodLoop = 3)
+        {
+            _maxMethodLoop = maxMethodLoop;
+            _errorChecker = new ErrorChecker();
+        }
+
         public TranslateWord Translate(
             TranslateWord word,
             TranslateLanguages targetLanguage,
-            RemoteWebDriver driver)
+            IRemoteWebDriver driver)
         {
             if (!InternetChecker.CheckForInternetConnection())
             {
@@ -25,37 +36,60 @@ namespace GoogleTranslate.Translators
 
             try
             {
-                var result = GetTranslateText(word, targetLanguage, driver);
+                var result = GetTranslatedText(word, targetLanguage, driver);
 
-                return WrapTranslateWord(word, driver, result);
+                TranslateWord newWord = WrapTranslateWord(word, driver, result);
+                if (_errorChecker.CheckIfError(newWord))
+                {
+                    if (_translateCounter == _maxMethodLoop)
+                    {
+                        throw new TranslateFailedException("Too many errors translating");
+                    }
+
+                    _translateCounter++;
+                    Translate(word, targetLanguage, driver);
+                    return newWord;
+                }
+                return newWord;
             }
             catch (Exception e)
             {
-                throw new TranslateFailedException("TranslateFailed", e);
+                throw new TranslateFailedException(e);
             }
         }
 
         public TranslateWord Detect(
             TranslateWord word,
-            RemoteWebDriver driver)
+            IRemoteWebDriver driver)
         {
             try
             {
                 IWebElement detectButton = GetDetectLanguage(word, driver);
-                Thread.Sleep(TimeSpan.FromSeconds(0.5));
+                Thread.Sleep(TimeSpan.FromMilliseconds(word.Word.Length * 125));
 
-                return WrapDetectWord(word, detectButton);
+                TranslateWord newWord = WrapDetectWord(word, detectButton);
+                if (_errorChecker.CheckIfError(newWord))
+                {
+                    if (_detectCounter == _maxMethodLoop)
+                    {
+                        throw new DetectFailedException();
+                    }
+                    _detectCounter++;
+                    Detect(word, driver);
+                    return newWord;
+                }
+                return newWord;
             }
             catch (Exception e)
             {
-                throw new TranslateFailedException("TranslateFailed", e);
+                throw new DetectFailedException(e);
             }
         }
 
-        private static string GetTranslateText(
-            TranslateWord word, 
+        private static string GetTranslatedText(
+            TranslateWord word,
             TranslateLanguages targetLanguage,
-            RemoteWebDriver driver)
+            IRemoteWebDriver driver)
         {
             const string url = "https://translate.google.com/";
             if (driver.Url != url)
@@ -65,15 +99,17 @@ namespace GoogleTranslate.Translators
 
             TypeWordInTextBox(word, driver);
             SelectTranslatedLanguage(targetLanguage, driver);
-
+            
+            Thread.Sleep(TimeSpan.FromMilliseconds(word.Word.Length * 125));
+            
             IWebElement resultBox = driver.FindElementById("result_box");
             var result = resultBox.Text;
             return result;
         }
 
         private TranslateWord WrapTranslateWord(
-            TranslateWord word, 
-            RemoteWebDriver driver, 
+            TranslateWord word,
+            IRemoteWebDriver driver,
             string result)
         {
             if (result == "")
@@ -87,8 +123,8 @@ namespace GoogleTranslate.Translators
         }
 
         private static IWebElement GetDetectLanguage(
-            TranslateWord word, 
-            RemoteWebDriver driver)
+            TranslateWord word,
+            IRemoteWebDriver driver)
         {
             driver.Url = "https://translate.google.com/";
 
@@ -100,7 +136,7 @@ namespace GoogleTranslate.Translators
         }
 
         private static TranslateWord WrapDetectWord(
-            TranslateWord word, 
+            TranslateWord word,
             IWebElement detectButton)
         {
             var lang = detectButton.Text?.Replace(" - detected", "");
@@ -120,7 +156,7 @@ namespace GoogleTranslate.Translators
 
         private static void SelectTranslatedLanguage(
             TranslateLanguages translateLanguage,
-            RemoteWebDriver driver)
+            IRemoteWebDriver driver)
         {
             var lang = EnumParser.GetDescriptionAttributeString(translateLanguage);
             By langItem = By.XPath(

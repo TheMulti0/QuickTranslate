@@ -1,15 +1,16 @@
-﻿using GoogleTranslate.Words;
-using OpenQA.Selenium.Remote;
+﻿using GoogleTranslate.Enums;
+using GoogleTranslate.Implementations;
+using GoogleTranslate.Words;
 
 namespace GoogleTranslate.Translators
 {
-    public interface ITranslator<T, in TE> where TE : RemoteWebDriver
+    public interface ITranslator
     {
         TranslateWord Translate(
             TranslateWord word,
-            T targetLanguage,
-            TE driver);
+            TranslateLanguages targetLanguage,
+            IRemoteWebDriver driver);
 
-        TranslateWord Detect(TranslateWord word, TE driver);
+        TranslateWord Detect(TranslateWord word, IRemoteWebDriver driver);
     }
 }

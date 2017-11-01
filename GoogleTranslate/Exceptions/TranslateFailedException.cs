@@ -4,18 +4,14 @@ namespace GoogleTranslate.Exceptions
 {
     public class TranslateFailedException : Exception
     {
-        public TranslateFailedException()
-        {
-        }
-
-        public TranslateFailedException(string message)
+        public TranslateFailedException(string message = "Translate Operation Failed.")
             : base(message)
         {
         }
 
         public TranslateFailedException(
-            string message, 
-            Exception inner)
+            Exception inner, 
+            string message = "Translate Operation Failed.")
             : base(message, inner)
         {
         }

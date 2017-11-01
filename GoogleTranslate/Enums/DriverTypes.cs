@@ -1,4 +1,5 @@
 ﻿using GoogleTranslate.Attributes;
+using GoogleTranslate.Implementations;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
@@ -8,13 +9,15 @@ namespace GoogleTranslate.Enums
 {
     public enum DriverTypes
     {
-        [DriverTypeAttribute(typeof(ChromeDriver))]
+        [DriverType(typeof(ChromeDriver))]
         ChromeDriver,
-        [DriverTypeAttribute(typeof(PhantomJSDriver))]
+        [DriverType(typeof(PhantomJSDriver))]
         PhantomJSDriver,
-        [DriverTypeAttribute(typeof(FirefoxDriver))]
+        [DriverType(typeof(FirefoxDriver))]
         FirefoxDriver,
-        [DriverTypeAttribute(typeof(InternetExplorerDriver))]
-        InternetExplorerDriver
+        [DriverType(typeof(InternetExplorerDriver))]
+        InternetExplorerDriver,
+        [DriverType(typeof(MockRemoteWebDriver))]
+        MockDriver
     }
 }

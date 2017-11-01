@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using GoogleTranslate.Implementations;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Remote;
 
 namespace GoogleTranslate.Translators
 {
     internal static class SeleniumExtensions
     {
         public static IWebElement FindElementByTraits(
-            this RemoteWebDriver driver,
+            this IRemoteWebDriver driver,
             List<By> traits)
         {
             var findElementByTraits = driver
@@ -19,7 +19,7 @@ namespace GoogleTranslate.Translators
         }
 
         public static ReadOnlyCollection<IWebElement> FindElementsByTraits(
-            this RemoteWebDriver driver,
+            this IRemoteWebDriver driver,
             List<By> traits)
         {
             return driver
@@ -28,7 +28,7 @@ namespace GoogleTranslate.Translators
         }
 
         private static List<IWebElement> FindElementListByTraits(
-            this RemoteWebDriver driver,
+            this IRemoteWebDriver driver,
             List<By> traits)
         {
             var list = new List<IWebElement>();
