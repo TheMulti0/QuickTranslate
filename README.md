@@ -11,11 +11,11 @@ This API can be very slow, so if you want a fast solution for translating, I rec
  
 ## Release
 
-Not right now, but I'm planning to release GoogleTranslate very quickly, so stay tuned!
+Not right now, but I'm planning to release GoogleTranslate very soon, so stay tuned!
  
 ## Contributing
 
-Meanwhile, there isn't any official way to contribute, but I will be happy if you want to contribute - please fork this repository and contact me. <br/>
+Meanwhile, there isn't any official way to contribute ***right now***, but I will be very happy if you want to contribute (if yes, please fork this repository and [contact me](#contact)). <br/>
 
 ### Official Contributors
 * [**@TheMulti0**](https://twitter.com/TheMulti0) , [**TheMulti0**](https://github.com/TheMulti0)
@@ -26,6 +26,9 @@ Meanwhile, there isn't any official way to contribute, but I will be happy if yo
 [***JetBrains***](https://www.jetbrains.com/) and [***Visual Studio***](https://www.visualstudio.com/) - awesome tools. <br/>
 [***Selenium***](https://github.com/SeleniumHQ/selenium) - amazing API! </br>
 
+## <a name="contact">
 ## Contact
 
 Please contact me through [Twitter](https://twitter.com/TheMulti0) DM's, or [E-Mail](mailto:multi@codeprecise.com)
+
+</a>
