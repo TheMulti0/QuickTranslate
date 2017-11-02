@@ -26,8 +26,7 @@ Meanwhile, there isn't any official way to contribute ***right now***, but I wil
 [***JetBrains***](https://www.jetbrains.com/) and [***Visual Studio***](https://www.visualstudio.com/) - awesome tools. <br/>
 [***Selenium***](https://github.com/SeleniumHQ/selenium) - amazing API! </br>
 
-## <a name="contact">
-## Contact
+## <a name="contact">Contact
 
 Please contact me through [Twitter](https://twitter.com/TheMulti0) DM's, or [E-Mail](mailto:multi@codeprecise.com)
 
