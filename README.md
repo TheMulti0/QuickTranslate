@@ -28,4 +28,4 @@ Meanwhile, there isn't any official way to contribute, but I will be happy if yo
 
 ## Contact
 
-Please contact me through [Twitter](https://twitter.com/TheMulti0) DM's, or [E-Mail](multi@codeprecise.com)
+Please contact me through [Twitter](https://twitter.com/TheMulti0) DM's, or [E-Mail](mailto:multi@codeprecise.com)
