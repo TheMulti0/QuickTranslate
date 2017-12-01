@@ -4,7 +4,7 @@ This is an unofficial Google Translate API written in C#. <br/>
 
 ## How does it work
 
-The API works with the [classic Google Translate website](https://translate.google.com/),
+Right now, the API works with the [classic Google Translate website](https://translate.google.com/) (but more websites support is planned), 
 It uses [Selenium](https://github.com/SeleniumHQ/selenium). <br/>
 This API can be very slow, so if you want a fast solution for translating, I recommend you to check out the [official API](https://cloud.google.com/translate/)
  ([Google Cloud Platform](https://cloud.google.com/)).<br/>
