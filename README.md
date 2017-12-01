@@ -1,4 +1,4 @@
-# GoogleTranslate
+# EasyTranslate
 
 This is an unofficial Google Translate API written in C#. <br/>
 
