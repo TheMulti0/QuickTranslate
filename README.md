@@ -1,6 +1,10 @@
 # EasyTranslate
 
-This is an unofficial Google Translate API written in C#. <br/>
+This is an unofficial translate/detect API written in C#. <br/>
+
+## How to use it
+
+There is going to be a simple documentation / tutorial very soon!
 
 ## How does it work
 
@@ -11,7 +15,7 @@ This API can be very slow, so if you want a fast solution for translating, I rec
  
 ## Release
 
-Not right now, but I'm planning to release GoogleTranslate very soon, so stay tuned!
+The first beta version is out! ([0.1.0-beta](https://www.nuget.org/packages/TheMulti0.EasyTranslate/0.1.0-beta))
  
 ## Contributing
 
