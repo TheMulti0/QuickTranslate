@@ -4,7 +4,7 @@ This is an unofficial translate/detect API written in C#. <br/>
 
 ## How to use it
 
-There is going to be a simple documentation / tutorial very soon!
+Check out the [Wiki](https://github.com/TheMulti0/EasyTranslate/wiki/1.-Installing-the-package) of this repo!
 
 ## Requirements
 
