@@ -6,6 +6,11 @@ This is an unofficial translate/detect API written in C#. <br/>
 
 There is going to be a simple documentation / tutorial very soon!
 
+## Requirements
+
+For now, the API supports [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard), so it supports all of those slik new frameworks!  
+![alt text](https://i.imgur.com/QxSV63j.png)
+
 ## How does it work
 
 Right now, the API works with the [classic Google Translate website](https://translate.google.com/) (but more websites support is planned), 
