@@ -20,7 +20,7 @@ This API can be very slow, so if you want a fast solution for translating, I rec
  
 ## Release
 
-The first beta version is out! ([0.1.0-beta](https://www.nuget.org/packages/TheMulti0.EasyTranslate/0.1.0-beta))
+The [beta is out!](https://www.nuget.org/packages/TheMulti0.EasyTranslate/)
  
 ## Contributing
 
