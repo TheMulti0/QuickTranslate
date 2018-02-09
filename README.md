@@ -4,7 +4,12 @@ This is an unofficial translate/detect API written in C#. <br/>
 
 ## How to use it
 
-There is going to be a simple documentation / tutorial very soon!
+Check out the [Wiki](https://github.com/TheMulti0/EasyTranslate/wiki/1.-Installing-the-package) of this repo!
+
+## Requirements
+
+For now, the API supports [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard), so it supports all of those slik new frameworks!  
+![alt text](https://i.imgur.com/QxSV63j.png)
 
 ## How does it work
 
@@ -15,14 +20,16 @@ This API can be very slow, so if you want a fast solution for translating, I rec
  
 ## Release
 
-The first beta version is out! ([0.1.0-beta](https://www.nuget.org/packages/TheMulti0.EasyTranslate/0.1.0-beta))
+The [beta is out!](https://www.nuget.org/packages/TheMulti0.EasyTranslate/)
  
 ## Contributing
 
-Meanwhile, there isn't any official way to contribute ***right now***, but I will be very happy if you want to contribute (if yes, please fork this repository and [contact me](#contact)). <br/>
+There isn't any contribution guide right now, but I will be very happy if you want to contribute (if yes, please fork this repository and [contact me](#contact)). <br/>
+
+If you find any issue, please list it in the issues, create a pull request and [contact me!](#contact)
 
 ### Official Contributors
-* [**@TheMulti0**](https://twitter.com/TheMulti0) , [**TheMulti0**](https://github.com/TheMulti0)
+* [**@TheMulti0**](https://twitter.com/TheMulti0) / [**TheMulti0**](https://github.com/TheMulti0)
 
 
 ## Credits
