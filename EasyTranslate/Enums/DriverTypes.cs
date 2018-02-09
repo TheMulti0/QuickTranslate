@@ -16,8 +16,8 @@ namespace EasyTranslate.Enums
         [DriverType(typeof(FirefoxDriver))]
         FirefoxDriver,
         [DriverType(typeof(InternetExplorerDriver))]
-        InternetExplorerDriver,
-        [DriverType(typeof(MockRemoteWebDriver))]
-        MockDriver
+        InternetExplorerDriver
+        //[DriverType(typeof(MockRemoteWebDriver))]
+        //MockDriver
     }
 }

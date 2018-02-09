@@ -1,5 +1,5 @@
-﻿using GoogleTranslate.Implementations;
-using GoogleTranslate.Translators;
+﻿using EasyTranslate.Implementations;
+using EasyTranslate.Translators;
 
 namespace EasyTranslateTests
 {

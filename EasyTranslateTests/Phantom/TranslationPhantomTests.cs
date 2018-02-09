@@ -1,5 +1,5 @@
-﻿using GoogleTranslate.Enums;
-using GoogleTranslate.Words;
+﻿using EasyTranslate.Enums;
+using EasyTranslate.Words;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace EasyTranslateTests.Phantom
@@ -44,7 +44,7 @@ namespace EasyTranslateTests.Phantom
             Assert.AreEqual("asdfdsdgfgd", translatedWord.Word);
         }
 
-        [TestMethod]
+        [TestMethod] 
         public void Test4()
         {
             TranslateWrapper result = TestUtilities.Initialize(DriverTypes.PhantomJSDriver);

@@ -1,5 +1,5 @@
-﻿using GoogleTranslate.Enums;
-using GoogleTranslate.Words;
+﻿using EasyTranslate.Enums;
+using EasyTranslate.Words;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace EasyTranslateTests.Phantom

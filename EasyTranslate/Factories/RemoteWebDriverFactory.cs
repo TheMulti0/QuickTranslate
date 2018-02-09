@@ -3,6 +3,8 @@ using EasyTranslate.Enums;
 using EasyTranslate.Implementations;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.IE;
 using OpenQA.Selenium.PhantomJS;
 
 namespace EasyTranslate.Factories
@@ -27,24 +29,25 @@ namespace EasyTranslate.Factories
 
             if (driverType == typeof(ChromeDriver))
             {
-                return new RealRemoteWebDriver(new ChromeDriver((ChromeDriverService) driverService)
-                {
-                    Url = "https://translate.google.com/"
-                });
+                return new RealRemoteWebDriver(new ChromeDriver((ChromeDriverService) driverService));
             }
 
-            if (driverType == typeof(MockRemoteWebDriver))
+            if (driverType == typeof(FirefoxDriver))
             {
-                return new MockRemoteWebDriver
-                {
-                    Url = "https://translate.google.com/"
-                };
+                return new RealRemoteWebDriver(new FirefoxDriver((FirefoxDriverService) driverService));
             }
 
-            return new RealRemoteWebDriver(new PhantomJSDriver((PhantomJSDriverService) driverService)
+            if (driverType == typeof(InternetExplorerDriverService))
             {
-                Url = "https://translate.google.com/"
-            });
+                return new RealRemoteWebDriver(new InternetExplorerDriver((InternetExplorerDriverService) driverService));
+            }
+
+            //if (driverType == typeof(MockRemoteWebDriver))
+            //{
+            //    return new MockRemoteWebDriver()
+            //}
+
+            return new RealRemoteWebDriver(new PhantomJSDriver((PhantomJSDriverService) driverService));
         }
 
         private static DriverService CreateService(Type driverType, string path)
@@ -53,6 +56,16 @@ namespace EasyTranslate.Factories
             if (driverType == typeof(ChromeDriver))
             {
                 service = ChromeDriverService.CreateDefaultService(path);
+            }
+
+            if (driverType == typeof(FirefoxDriver))
+            {
+                service = FirefoxDriverService.CreateDefaultService(path);
+            }
+
+            if (driverType == typeof(InternetExplorerDriver))
+            {
+                service = InternetExplorerDriverService.CreateDefaultService(path);
             }
 
             if (service == null)

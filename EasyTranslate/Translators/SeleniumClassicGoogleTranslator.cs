@@ -13,6 +13,8 @@ namespace EasyTranslate.Translators
 {
     public class SeleniumClassicGoogleTranslator : ITranslator
     {
+        private const string Url = "https://translate.google.com/";
+
         private readonly ErrorChecker _errorChecker;
         private readonly int _maxMethodLoop;
         private readonly double _timeFailsMilliseconds;
@@ -39,7 +41,7 @@ namespace EasyTranslate.Translators
 
             if (!InternetChecker.CheckForInternetConnection())
             {
-                throw new NoInternetConnectionAvaliableExcpetion();
+                throw new NoInternetConnectionAvaliableException();
             }
 
             try
@@ -51,18 +53,25 @@ namespace EasyTranslate.Translators
                 {
                     if (_translateCounter == _maxMethodLoop)
                     {
-                        throw new TranslateFailedException("Too many errors translating");
+                        throw new TranslateFailedException("Too many failed operations.");
                     }
 
                     _translateCounter++;
-                    Translate(word, targetLanguage, driver);
-                    return newWord;
+                    TranslateWord successWord = Translate(word, targetLanguage, driver);
+                    return successWord;
                 }
                 return newWord;
             }
             catch (Exception e)
             {
-                throw new TranslateFailedException(e);
+                if (_translateCounter == _maxMethodLoop)
+                {
+                    throw new TranslateFailedException(e, "Too many failed operations.");
+                }
+
+                _translateCounter++;
+                TranslateWord successWord = Translate(word, targetLanguage, driver);
+                return successWord;
             }
         }
 
@@ -81,17 +90,23 @@ namespace EasyTranslate.Translators
                 {
                     if (_detectCounter == _maxMethodLoop)
                     {
-                        throw new DetectFailedException();
+                        throw new DetectFailedException("Too many failed operations.");
                     }
                     _detectCounter++;
-                    Detect(word, driver);
-                    return newWord;
+                    TranslateWord successWord = Detect(word, driver);
+                    return successWord;
                 }
                 return newWord;
             }
             catch (Exception e)
             {
-                throw new DetectFailedException(e);
+                if (_detectCounter == _maxMethodLoop)
+                {
+                    throw new DetectFailedException(e, "Too many failed operations.");
+                }
+                _detectCounter++;
+                TranslateWord successWord = Detect(word, driver);
+                return successWord;
             }
         }
 
@@ -100,10 +115,9 @@ namespace EasyTranslate.Translators
             TranslateLanguages targetLanguage,
             IRemoteWebDriver driver)
         {
-            const string url = "https://translate.google.com/";
-            if (driver.Url != url)
+            if (driver.Url != Url)
             {
-                driver.Url = url;
+                driver.Url = Url;
             }
 
             TypeWordInTextBox(word, driver);
@@ -139,7 +153,11 @@ namespace EasyTranslate.Translators
             TranslateWord word,
             IRemoteWebDriver driver)
         {
-            driver.Url = "https://translate.google.com/";
+            var _url = "https://translate.google.com/";
+            if (driver.Url != Url)
+            {
+                driver.Url = Url;
+            }
 
             IWebElement detectButton = driver.FindElementByXPath("//*[@id=\"gt-sl-sugg\"]/div[5]");
             detectButton.Click();
@@ -217,7 +235,7 @@ namespace EasyTranslate.Translators
                 }
                 catch (NoSuchElementException)
                 {
-                    throw new NoSuchLanguageExcpetion(
+                    throw new NoSuchLanguageException(
                         $"No language called '{EnumParser.GetDescriptionAttributeString(translateLanguage)}' found.",
                         translateLanguage);
                 }
