@@ -6,6 +6,9 @@ using System.Net;
 using System.Text;
 using System.Web;
 using System.Xml;
+using EasyTranslate.Enums;
+using EasyTranslate.Translators;
+using EasyTranslate.Words;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -16,74 +19,99 @@ namespace ConsoleApp
         static void Main(string[] args)
         {
             
-            //var r = w.GetResponse();
-            Console.WriteLine("Hello World!");
-            GetValue();
-            Console.ReadLine();
+            ////var r = w.GetResponse();
+            //Console.WriteLine("Hello World!");
+            //GetValue();
+            //Console.ReadLine();
+
+            TranslateWord a = new GoogleTranslateClassicTranslator().Translate(new TranslateWord("hello"), TranslateLanguages.French);
+
+            var b = a.Word;
         }
 
         private static void GetValue()
         {
-            //var builder = new UriBuilder("https://translate.google.com/translate_a/single?");
-            //NameValueCollection query = HttpUtility.ParseQueryString("");
+            var builder = new UriBuilder("https://translate.google.com/translate_a/single");
+            NameValueCollection query = HttpUtility.ParseQueryString("");
+            string word = "hi";
+            string token = new TokenGenerator().GetToken(word, new TkkGenerator().GetTKK());
 
-            //query["client"] = "t";
+            query["client"] = "t";
 
-            //query["sl"] = "auto";
+            query["sl"] = "auto";
 
-            //query["tl"] = "fr";
+            query["tl"] = "fr";
 
-            //query["hl"] = "fr";
+            query["hl"] = "fr";
 
-            //query["ie"] = "UTF-8";
+            query["dt"] = "dtparameter";
 
-            //query["oe"] = "UTF-8";
+            query["ie"] = "UTF-8";
 
-            //query["otf"] = "1";
+            query["oe"] = "UTF-8";
 
-            //query["ssel"] = "0";
+            query["otf"] = "2";
 
-            //query["tsel"] = "0";
+            query["ssel"] = "0";
 
-            //query["kc"] = "7";
+            query["tsel"] = "4";
 
-            //query["tk"] = "914062.761254";
+            query["kc"] = "20";
 
-            //query["q"] = "hi";
+            query["tk"] = token;
 
-            //var queryString = query.ToString();
-            //var finalQuery = queryString.Insert(queryString.Length,
-            //    "&dt=['at', 'bd', 'ex', 'ld', 'md', 'qca', 'rw', 'rm', 'ss', 't']");
-            //builder.Query = finalQuery;
+            query["q"] = word;
+
+            var queryString = query.ToString();
+            var finalQuery = queryString.Insert(queryString.Length,
+                "&dt=['at', 'bd', 'ex', 'ld', 'md', 'qca', 'rw', 'rm', 'ss', 't']");
+            builder.Query = finalQuery;
             //https://translate.google.com/translate_a/single?client=t&sl=auto&tl=en&hl=en&dt=['at', 'bd', 'ex', 'ld', 'md', 'qca', 'rw', 'rm', 'ss', 't']&ie=UTF-8&oe=UTF-8&otf=1&ssel=0&tsel=0&kc=7&q=bonjour
 
-
-            WebRequest request = WebRequest.CreateHttp("https://translate.google.com/translate_a/single?client=t&sl=auto&tl=iw&hl=en&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&ie=UTF-8&oe=UTF-8&otf=1&ssel=0&tsel=0&kc=1&tk=684590.793873&q=d");
+            string modifiedUrl = builder.Uri.ToString()
+                .Replace("dtparameter", "at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t");
+            //var requestUriString = "https://translate.google.com/translate_a/single?client=t&sl=auto&tl=fr&hl=fr&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&ie=UTF-8&oe=UTF-8&ssel=0&tsel=4&kc=0&tk=token&q=word";
+            //requestUriString.Replace("token", token);
+            //requestUriString.Replace("word", word);
+            WebRequest request = WebRequest.Create(modifiedUrl);
             WebResponse response = request.GetResponse();
             Stream responseStream = response.GetResponseStream();
             var reader = new StreamReader(responseStream);
-            var result = reader.ReadToEnd();
-            JToken tmp = JsonConvert.DeserializeObject<JToken>(result);
-            var a = tmp[0];
-            string Eyyy = "";
-            var i = a[a.Count() - 1];
-            var count = i.Count();
-            if (count == 3)
+            string result = reader.ReadToEnd();
+
+
+
+
+
+            string finalResult = "";
+            JToken translationInfo = JsonConvert.DeserializeObject<JToken>(result)[0];
+
+            bool transcriptionAvaliable = translationInfo.Count() > 1;
+            string[] translate = new string[translationInfo.Count() - (transcriptionAvaliable ? 1 : 0)];
+
+            for (int i = 0; i < translate.Length; i++)
             {
-                Eyyy = (string) i[count - 1];
+                translate[i] = (string)translationInfo[i][0];
             }
-            else
-            {
-                if (i[count - 2] == null)
-                {
-                    Eyyy = i[count - 2].ToString();
-                }
-                else
-                {
-                    Eyyy = (string) i[count - 1];
-                }
-            }
-            
+
+            //var mainInfo = translationInfo[translationInfo.Count() - 1];
+            //var count = mainInfo.Count();
+            //if (count == 3)
+            //{
+            //    finalResult = (string)mainInfo[count - 1];
+            //}
+            //else
+            //{
+            //    if (mainInfo[count - 2] != null)
+            //    {
+            //        finalResult = mainInfo[count - 2].ToString();
+            //    }
+            //    else
+            //    {
+            //        finalResult = (string)mainInfo[count - 1];
+            //    }
+            //}
+
 
             Console.ReadLine();
         }

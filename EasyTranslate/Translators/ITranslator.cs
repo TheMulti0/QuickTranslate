@@ -1,5 +1,4 @@
 ﻿using EasyTranslate.Enums;
-using EasyTranslate.Implementations;
 using EasyTranslate.Words;
 
 namespace EasyTranslate.Translators
@@ -8,11 +7,8 @@ namespace EasyTranslate.Translators
     {
         TranslateWord Translate(
             TranslateWord word,
-            TranslateLanguages targetLanguage,
-            IRemoteWebDriver driver);
+            TranslateLanguages targetLanguage);
 
-        TranslateWord Detect(
-            TranslateWord word, 
-            IRemoteWebDriver driver);
+        TranslateWord Detect(TranslateWord word);
     }
 }
