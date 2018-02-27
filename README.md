@@ -14,9 +14,10 @@ For now, the API supports [.NET Standard 2.0](https://docs.microsoft.com/en-us/d
 ## How does it work
 
 Right now, the API works with the [classic Google Translate website](https://translate.google.com/) (but more websites support is planned), 
-It uses [Selenium](https://github.com/SeleniumHQ/selenium). <br/>
-This API can be very slow, so if you want a fast solution for translating, I recommend you to check out the [official API](https://cloud.google.com/translate/)
- ([Google Cloud Platform](https://cloud.google.com/)).<br/>
+It uses [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json). <br/>
+This API is very quick, it uses the same engine that the website itself does, and the official Google Translate API uses.
+[Official API:](https://cloud.google.com/translate/)
+([Google Cloud Platform](https://cloud.google.com/)).<br/>
  
 ## Release
 
@@ -35,7 +36,7 @@ If you find any issue, please list it in the issues, create a pull request and [
 ## Credits
 
 [***JetBrains***](https://www.jetbrains.com/) and [***Visual Studio***](https://www.visualstudio.com/) - awesome tools. <br/>
-[***Selenium***](https://github.com/SeleniumHQ/selenium) - amazing API! </br>
+[***Newtonsoft.Json***](https://github.com/JamesNK/Newtonsoft.Json) - amazing API! </br>
 
 ## <a name="contact">Contact
 
