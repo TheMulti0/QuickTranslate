@@ -16,7 +16,7 @@ For now, the API supports [.NET Standard 2.0](https://docs.microsoft.com/en-us/d
 Right now, the API works with the [classic Google Translate website](https://translate.google.com/) (but more websites support is planned), 
 It uses [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json). <br/>
 This API is very quick, it uses the same engine that the website itself does, and the official Google Translate API uses.
-[Official API:](https://cloud.google.com/translate/)
+[Official API](https://cloud.google.com/translate/)
 ([Google Cloud Platform](https://cloud.google.com/)).<br/>
  
 ## Release
