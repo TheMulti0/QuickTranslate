@@ -18,14 +18,14 @@ namespace ConsoleApp
     {
         static void Main(string[] args)
         {
-            
+
             ////var r = w.GetResponse();
             //Console.WriteLine("Hello World!");
             //GetValue();
             //Console.ReadLine();
 
-            TranslateWord a = new GoogleTranslateClassicTranslator().Translate(new TranslateWord("hello"), TranslateLanguages.French);
-
+            //TranslateWord a = new GoogleTranslateClassicTranslator().Translate(new TranslateWord("hello"), TranslateLanguages.French);
+            TranslateWord a = new GoogleTranslateClassicTranslator().Detect(new TranslateWord("שלום"));
             var b = a.Word;
         }
 

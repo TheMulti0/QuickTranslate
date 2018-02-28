@@ -15,11 +15,14 @@ namespace EasyTranslate.Translators
     public class GoogleTranslateClassicTranslator : ITranslator
     {
         private string _token;
+        private LanguageMap _map;
 
         private void Initialize(TranslateWord word)
         {
             string tkk = new TkkGenerator().GetTKK();
             _token = new TokenGenerator().GetToken(word.Word, tkk);
+
+            _map = new LanguageMap();
         }
 
         public TranslateWord Translate(TranslateWord word, TranslateLanguages targetLanguage)
@@ -30,15 +33,34 @@ namespace EasyTranslate.Translators
 
             string response = GetResponseString(url);
 
-            string resultWorld = ExtractWord(response);
-            var result = new TranslateWord(resultWorld, targetLanguage);
+            bool isTranscriptionAvaliable = false;
+
+            JToken json = ExtractJson(response, ref isTranscriptionAvaliable);
+
+            string resultWord = ExtractWord(json, isTranscriptionAvaliable);
+
+            var result = new TranslateWord(resultWord, targetLanguage);
 
             return result;
         }
 
-        public TranslateWord Detect(TranslateWord word)
+        public TranslateWord Detect(TranslateWord word, TranslateLanguages randomLanguage = TranslateLanguages.French)
         {
-            throw new NotImplementedException();
+            Initialize(word);
+
+            string url = GetUrl(word, randomLanguage);
+
+            string response = GetResponseString(url);
+
+            bool isTranscriptionAvaliable = false;
+
+            JToken json = ExtractJson(response, ref isTranscriptionAvaliable);
+
+            TranslateLanguages language = ExtractLanguage(json);
+
+            var result = new TranslateWord(word.Word, language);
+
+            return result;
         }
 
         private string GetUrl(TranslateWord word, TranslateLanguages lang)
@@ -51,7 +73,7 @@ namespace EasyTranslate.Translators
 
             builder.Query = finalQuery;
 
-            string langValue = new LanguageMap().Find(lang).Key;
+            string langValue = _map.Find(lang).Key;
 
             var modifiedUrl = builder.Uri
                 .ToString()
@@ -118,23 +140,40 @@ namespace EasyTranslate.Translators
             return result;
         }
 
-        private string ExtractWord(string xml)
+        private JToken ExtractJson(string jsonString, ref bool isTranscriptionAvaliable)
         {
-            string result = "";
+            JToken json = JsonConvert.DeserializeObject<JToken>(jsonString);
 
-            JToken translationInfo = JsonConvert.DeserializeObject<JToken>(xml)[0];
+            isTranscriptionAvaliable = json[0].Count() > 1;
 
-            bool isTranscriptionAvaliable = translationInfo.Count() > 1;
+            return json;
+        }
+
+        private string ExtractWord(JToken json, bool isTranscriptionAvaliable)
+        {
+            var result = "";
+            var translationInfo = json[0];
 
             var translate = new string[
-                translationInfo.Count() - (isTranscriptionAvaliable ? 1 : 0)];
+                json.Count() - (isTranscriptionAvaliable ? 1 : 0)];
 
             for (int i = 0; i < translate.Length; i++)
             {
-                result = (string)translationInfo[i][0];
+                result = (string) json[i][0];
             }
 
             return result;
+        }
+
+        private TranslateLanguages ExtractLanguage(JToken json)
+        {
+            string result = "";
+
+            result = (string) json[2];
+
+            TranslateLanguages language = _map.Find(result).Value;
+
+            return language;
         }
 
         private static void Main()

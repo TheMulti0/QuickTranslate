@@ -9,6 +9,6 @@ namespace EasyTranslate.Translators
             TranslateWord word,
             TranslateLanguages targetLanguage);
 
-        TranslateWord Detect(TranslateWord word);
+        TranslateWord Detect(TranslateWord word, TranslateLanguages randomLanguage = TranslateLanguages.French);
     }
 }
