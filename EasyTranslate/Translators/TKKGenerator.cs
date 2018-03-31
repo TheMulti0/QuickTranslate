@@ -10,18 +10,18 @@ namespace EasyTranslate.Translators
         private string GetResponse()
         {
             var client = new WebClient();
-            var headers = new WebHeaderCollection();
-
-            headers.Add("Accept", "text/html");
-            headers.Add("Accept-Charset", "utf-8");
-
+            var headers = new WebHeaderCollection
+            {
+                {"Accept", "text/html"},
+                { "Accept-Charset", "utf-8"}
+            };
+            
             client.Headers = headers;
 
-            var t = new Task<string>(() =>
+            var task = new Task<string>(() =>
             {
                 try
                 {
-                    
                     return client.DownloadString(new Uri("https://translate.google.com"));
                 }
                 catch
@@ -32,18 +32,10 @@ namespace EasyTranslate.Translators
                 }
             });
 
-            t.Start();
+            task.Start();
+            task.Wait();
 
-            try
-            {
-                t.Wait();
-            }
-            catch
-            {
-                throw;
-            }
-
-            return t.Result;
+            return task.Result;
         }
 
         public string GetTKK()
