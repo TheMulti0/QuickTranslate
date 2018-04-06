@@ -1,10 +1,11 @@
 ﻿using System.Net;
+using EasyTranslate.Exceptions;
 
 namespace EasyTranslate.Checkers
 {
     internal static class InternetChecker
     {
-        public static bool CheckForInternetConnection()
+        public static void CheckForInternetConnection()
         {
             try
             {
@@ -13,13 +14,12 @@ namespace EasyTranslate.Checkers
                     var url = "http://google.com";
                     using (client.OpenRead(url))
                     {
-                        return true;
                     }
                 }
             }
             catch
             {
-                return false;
+                throw new NoInternetConnectionAvaliableException();
             }
         }
     }

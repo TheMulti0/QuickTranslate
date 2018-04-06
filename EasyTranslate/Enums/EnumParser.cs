@@ -1,14 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
-using EasyTranslate.Attributes;
 
 namespace EasyTranslate.Enums
 {
     public static class EnumParser
     {
-        public static string GetDescriptionAttributeString(Enum @enum)
+        public static string GetDescriptionAttributeString(this Enum @enum)
         {
             FieldInfo fieldInfo = @enum.GetType().GetField(@enum.ToString());
             var attributes =
@@ -18,22 +18,12 @@ namespace EasyTranslate.Enums
                 : throw new CustomAttributeFormatException($"No DescriptionAttribute found. {attributes}");
         }
 
-        public static Type GetDriverTypeAttributeType(Enum @enum)
+        public static Enum GetEnum(this string value, Type enumType)
         {
-            FieldInfo fieldInfo = @enum.GetType().GetField(@enum.ToString());
-            var attributes =
-                (DriverTypeAttribute[])fieldInfo.GetCustomAttributes(typeof(DriverTypeAttribute), false);
-            return attributes.Length > 0
-                ? attributes[0].DriverType
-                : throw new CustomAttributeFormatException($"No DriverTypeAttribute found. {attributes}");
-        }
-
-        public static Enum GetEnum(string value, Type @enum)
-        {
-            var names = Enum.GetNames(@enum);
+            IEnumerable<string> names = Enum.GetNames(enumType);
             foreach (var name in names)
             {
-                var enumValue = (Enum) Enum.Parse(@enum, name);
+                var enumValue = (Enum) Enum.Parse(enumType, name);
 
                 if (GetDescriptionAttributeString(enumValue) == value)
                 {
@@ -44,6 +34,5 @@ namespace EasyTranslate.Enums
             Debug.WriteLine(value);
             throw new ArgumentException("The string does not exist in the enum.");
         }
-
     }
 }
