@@ -24,96 +24,102 @@ namespace ConsoleApp
             //GetValue();
             //Console.ReadLine();
 
-            //TranslateWord a = new GoogleTranslateClassicTranslator().Translate(new TranslateWord("hello"), TranslateLanguages.French);
-            TranslateWord a = new GoogleTranslateClassicTranslator().Translate(new TranslateWord("שלום עליכם"), TranslateLanguages.English);
-            var b = a.Word;
+            //TranslateWord a = new GoogleTranslateClassicTGranslator().Translate(new TranslateWord("hello"), TranslateLanguages.French);
+            TranslateWord a = new GoogleTranslateClassicTranslator().Translate(new TranslateWord("שלום"), TranslateLanguages.Arabic);
+
+            TranslateWord b = new GoogleTranslateClassicTranslator().Translate(new TranslateWord(a.Word), TranslateLanguages.Hebrew);
+
+            TranslateWord c = new GoogleTranslateClassicTranslator().Translate(new TranslateWord("Hello there!"), TranslateLanguages.French);
+
+
+            Console.WriteLine();
         }
 
-        private static void GetValue()
-        {
-            var builder = new UriBuilder("https://translate.google.com/translate_a/single");
-            NameValueCollection query = HttpUtility.ParseQueryString("");
-            string word = "hi";
-            string token = new TokenGenerator().GetToken(word, new TkkGenerator().GetTKK());
+        //private static void GetValue()
+        //{
+        //    var builder = new UriBuilder("https://translate.google.com/translate_a/single");
+        //    NameValueCollection query = HttpUtility.ParseQueryString("");
+        //    string word = "hi";
+        //    string token = new TokenGenerator().GetToken(word, new TkkGenerator().GetTKK());
 
-            query["client"] = "t";
+        //    query["client"] = "t";
 
-            query["sl"] = "auto";
+        //    query["sl"] = "auto";
 
-            query["tl"] = "fr";
+        //    query["tl"] = "fr";
 
-            query["hl"] = "fr";
+        //    query["hl"] = "fr";
 
-            query["dt"] = "dtparameter";
+        //    query["dt"] = "dtparameter";
 
-            query["ie"] = "UTF-8";
+        //    query["ie"] = "UTF-8";
 
-            query["oe"] = "UTF-8";
+        //    query["oe"] = "UTF-8";
 
-            query["otf"] = "2";
+        //    query["otf"] = "2";
 
-            query["ssel"] = "0";
+        //    query["ssel"] = "0";
 
-            query["tsel"] = "4";
+        //    query["tsel"] = "4";
 
-            query["kc"] = "20";
+        //    query["kc"] = "20";
 
-            query["tk"] = token;
+        //    query["tk"] = token;
 
-            query["q"] = word;
+        //    query["q"] = word;
 
-            var queryString = query.ToString();
-            var finalQuery = queryString.Insert(queryString.Length,
-                "&dt=['at', 'bd', 'ex', 'ld', 'md', 'qca', 'rw', 'rm', 'ss', 't']");
-            builder.Query = finalQuery;
-            //https://translate.google.com/translate_a/single?client=t&sl=auto&tl=en&hl=en&dt=['at', 'bd', 'ex', 'ld', 'md', 'qca', 'rw', 'rm', 'ss', 't']&ie=UTF-8&oe=UTF-8&otf=1&ssel=0&tsel=0&kc=7&q=bonjour
+        //    var queryString = query.ToString();
+        //    var finalQuery = queryString.Insert(queryString.Length,
+        //        "&dt=['at', 'bd', 'ex', 'ld', 'md', 'qca', 'rw', 'rm', 'ss', 't']");
+        //    builder.Query = finalQuery;
+        //    //https://translate.google.com/translate_a/single?client=t&sl=auto&tl=en&hl=en&dt=['at', 'bd', 'ex', 'ld', 'md', 'qca', 'rw', 'rm', 'ss', 't']&ie=UTF-8&oe=UTF-8&otf=1&ssel=0&tsel=0&kc=7&q=bonjour
 
-            string modifiedUrl = builder.Uri.ToString()
-                .Replace("dtparameter", "at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t");
-            //var requestUriString = "https://translate.google.com/translate_a/single?client=t&sl=auto&tl=fr&hl=fr&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&ie=UTF-8&oe=UTF-8&ssel=0&tsel=4&kc=0&tk=token&q=word";
-            //requestUriString.Replace("token", token);
-            //requestUriString.Replace("word", word);
-            WebRequest request = WebRequest.Create(modifiedUrl);
-            WebResponse response = request.GetResponse();
-            Stream responseStream = response.GetResponseStream();
-            var reader = new StreamReader(responseStream);
-            string result = reader.ReadToEnd();
-
-
+        //    string modifiedUrl = builder.Uri.ToString()
+        //        .Replace("dtparameter", "at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t");
+        //    //var requestUriString = "https://translate.google.com/translate_a/single?client=t&sl=auto&tl=fr&hl=fr&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&ie=UTF-8&oe=UTF-8&ssel=0&tsel=4&kc=0&tk=token&q=word";
+        //    //requestUriString.Replace("token", token);
+        //    //requestUriString.Replace("word", word);
+        //    WebRequest request = WebRequest.Create(modifiedUrl);
+        //    WebResponse response = request.GetResponse();
+        //    Stream responseStream = response.GetResponseStream();
+        //    var reader = new StreamReader(responseStream);
+        //    string result = reader.ReadToEnd();
 
 
 
-            string finalResult = "";
-            JToken translationInfo = JsonConvert.DeserializeObject<JToken>(result)[0];
-
-            bool transcriptionAvaliable = translationInfo.Count() > 1;
-            string[] translate = new string[translationInfo.Count() - (transcriptionAvaliable ? 1 : 0)];
-
-            for (int i = 0; i < translate.Length; i++)
-            {
-                translate[i] = (string)translationInfo[i][0];
-            }
-
-            //var mainInfo = translationInfo[translationInfo.Count() - 1];
-            //var count = mainInfo.Count();
-            //if (count == 3)
-            //{
-            //    finalResult = (string)mainInfo[count - 1];
-            //}
-            //else
-            //{
-            //    if (mainInfo[count - 2] != null)
-            //    {
-            //        finalResult = mainInfo[count - 2].ToString();
-            //    }
-            //    else
-            //    {
-            //        finalResult = (string)mainInfo[count - 1];
-            //    }
-            //}
 
 
-            Console.ReadLine();
-        }
+        //    string finalResult = "";
+        //    JToken translationInfo = JsonConvert.DeserializeObject<JToken>(result)[0];
+
+        //    bool transcriptionAvaliable = translationInfo.Count() > 1;
+        //    string[] translate = new string[translationInfo.Count() - (transcriptionAvaliable ? 1 : 0)];
+
+        //    for (int i = 0; i < translate.Length; i++)
+        //    {
+        //        translate[i] = (string)translationInfo[i][0];
+        //    }
+
+        //    //var mainInfo = translationInfo[translationInfo.Count() - 1];
+        //    //var count = mainInfo.Count();
+        //    //if (count == 3)
+        //    //{
+        //    //    finalResult = (string)mainInfo[count - 1];
+        //    //}
+        //    //else
+        //    //{
+        //    //    if (mainInfo[count - 2] != null)
+        //    //    {
+        //    //        finalResult = mainInfo[count - 2].ToString();
+        //    //    }
+        //    //    else
+        //    //    {
+        //    //        finalResult = (string)mainInfo[count - 1];
+        //    //    }
+        //    //}
+
+
+        //    Console.ReadLine();
+        //}
     }
 }

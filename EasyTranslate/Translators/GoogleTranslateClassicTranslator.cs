@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
+using EasyTranslate.Checkers;
 using EasyTranslate.Enums;
 using EasyTranslate.Words;
 using Newtonsoft.Json;
@@ -13,7 +15,6 @@ namespace EasyTranslate.Translators
 {
     public class GoogleTranslateClassicTranslator : ITranslator
     {
-        private LanguageMap _map;
         private string _token;
 
         public TranslateWord Translate(TranslateWord word, TranslateLanguages targetLanguage)
@@ -54,36 +55,27 @@ namespace EasyTranslate.Translators
             return result;
         }
 
-        private void Initialize(TranslateWord word)
-        {
-            string tkk = new TkkGenerator().GetTKK();
-            _token = new TokenGenerator().GetToken(word.Word, tkk);
-
-            _map = new LanguageMap();
-        }
-
         private string GetUrl(TranslateWord word, TranslateLanguages lang)
         {
-            UriBuilder builder = BuildUri(word);
+            var builder = BuildUri(word);
 
-            string queryString = builder.Query;
-            string finalQuery = queryString.Insert(queryString.Length,
+            var queryString = builder.Query.ToString(); 
+            var finalQuery = queryString.Insert(queryString.Length,
                 "&dt=['at', 'bd', 'ex', 'ld', 'md', 'qca', 'rw', 'rm', 'ss', 't']");
 
             builder.Query = finalQuery;
 
-            string langValue = _map.Find(lang).Key;
+            var langValue = lang.GetDescriptionAttributeString();
 
             string modifiedUrl = builder.Uri
-                .ToString()
-                .Replace(
-                    "tl=lang" + "&hl=lang" + "&dt=dtparameter",
-                    $"tl={langValue}" + $"&hl={langValue}" + "&dt=dtparameter")
-                .Replace(
-                    "dtparameter" + "&ie=UTF-8",
-                    "at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t" + "&ie=UTF-8")
-                .Replace("single??", "single?");
-
+                                        .ToString()
+                                        .Replace(
+                                                 "tl=lang" + "&hl=lang" + "&dt=dtparameter",
+                                                 $"tl={langValue}" + $"&hl={langValue}" + "&dt=dtparameter")
+                                        .Replace(
+                                                 "dtparameter" + "&ie=UTF-8",
+                                                 "at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t" + "&ie=UTF-8")
+                                        .Replace("single??", "single?");
 
             return modifiedUrl;
         }
@@ -91,7 +83,7 @@ namespace EasyTranslate.Translators
         private UriBuilder BuildUri(TranslateWord word)
         {
             var builder = new UriBuilder("https://translate.google.com/translate_a/single");
-            NameValueCollection query = HttpUtility.ParseQueryString("");
+            var query = HttpUtility.ParseQueryString("");
 
 
             query["client"] = "t";
@@ -129,12 +121,12 @@ namespace EasyTranslate.Translators
         {
             WebRequest request = WebRequest.CreateHttp(url);
 
-            WebResponse response = request.GetResponse();
+            var response = request.GetResponse();
 
-            Stream responseStream = response.GetResponseStream();
+            var responseStream = response.GetResponseStream();
 
             var reader = new StreamReader(responseStream);
-            string result = reader.ReadToEnd();
+            var result = reader.ReadToEnd();
 
             return result;
         }
@@ -172,18 +164,17 @@ namespace EasyTranslate.Translators
                     wordJToken = translationInfo[0][0];
                 }
 
-                result = (string) wordJToken;
+                result = (string)wordJToken;
             }
 
             return result;
         }
-
         private TranslateLanguages ExtractLanguage(JToken json)
         {
             var result = "";
 
             result = (string) json[2];
-            
+
             TranslateLanguages language = _map.Find(result).Value;
 
             return language;

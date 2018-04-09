@@ -21,8 +21,8 @@ This API is very quick, it uses the same engine that the website itself does, an
  
 ## Release
 
-The [beta is out!](https://www.nuget.org/packages/TheMulti0.EasyTranslate/)
- 
+I am having some problems with releasing this package, but 1.0.0 is out soon!
+
 ## Contributing
 
 There isn't any contribution guide right now, but I will be very happy if you want to contribute (if yes, please fork this repository and [contact me](#contact)). <br/>

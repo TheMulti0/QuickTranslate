@@ -10,7 +10,6 @@ namespace EasyTranslate.Translators
         {
             //byte[] bt = Encoding.ASCII.GetBytes(str);
             //return Convert.ToInt32(bt[0]);
-
             return Convert.ToInt32(Convert.ToString(str[0], 10));
         }
 
@@ -20,7 +19,7 @@ namespace EasyTranslate.Translators
             {
                 string c = b.Substring(i + 2, 1);
                 int d = 
-                    string.Compare("a", c) <= 0 
+                    string.CompareOrdinal("a", c) <= 0 
                         ? ASCIICode(c) - 87 
                         : Convert.ToInt32(c);    // "a" <= evenChar
 
@@ -40,7 +39,8 @@ namespace EasyTranslate.Translators
 
         public string GetToken(string token, string TKK)
         {
-            if (string.IsNullOrWhiteSpace(token) || string.IsNullOrWhiteSpace(TKK))
+            if (string.IsNullOrWhiteSpace(token) 
+                || string.IsNullOrWhiteSpace(TKK))
             {
                 return null;
             }
