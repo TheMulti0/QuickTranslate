@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
@@ -14,16 +13,8 @@ namespace EasyTranslate.Translators
 {
     public class GoogleTranslateClassicTranslator : ITranslator
     {
-        private string _token;
         private LanguageMap _map;
-
-        private void Initialize(TranslateWord word)
-        {
-            string tkk = new TkkGenerator().GetTKK();
-            _token = new TokenGenerator().GetToken(word.Word, tkk);
-
-            _map = new LanguageMap();
-        }
+        private string _token;
 
         public TranslateWord Translate(TranslateWord word, TranslateLanguages targetLanguage)
         {
@@ -33,7 +24,7 @@ namespace EasyTranslate.Translators
 
             string response = GetResponseString(url);
 
-            bool isTranscriptionAvaliable = false;
+            var isTranscriptionAvaliable = false;
 
             JToken json = ExtractJson(response, ref isTranscriptionAvaliable);
 
@@ -52,7 +43,7 @@ namespace EasyTranslate.Translators
 
             string response = GetResponseString(url);
 
-            bool isTranscriptionAvaliable = false;
+            var isTranscriptionAvaliable = false;
 
             JToken json = ExtractJson(response, ref isTranscriptionAvaliable);
 
@@ -63,19 +54,27 @@ namespace EasyTranslate.Translators
             return result;
         }
 
+        private void Initialize(TranslateWord word)
+        {
+            string tkk = new TkkGenerator().GetTKK();
+            _token = new TokenGenerator().GetToken(word.Word, tkk);
+
+            _map = new LanguageMap();
+        }
+
         private string GetUrl(TranslateWord word, TranslateLanguages lang)
         {
             UriBuilder builder = BuildUri(word);
 
-            var queryString = builder.Query.ToString(); 
-            var finalQuery = queryString.Insert(queryString.Length,
+            string queryString = builder.Query;
+            string finalQuery = queryString.Insert(queryString.Length,
                 "&dt=['at', 'bd', 'ex', 'ld', 'md', 'qca', 'rw', 'rm', 'ss', 't']");
 
             builder.Query = finalQuery;
 
             string langValue = _map.Find(lang).Key;
 
-            var modifiedUrl = builder.Uri
+            string modifiedUrl = builder.Uri
                 .ToString()
                 .Replace(
                     "tl=lang" + "&hl=lang" + "&dt=dtparameter",
@@ -84,7 +83,7 @@ namespace EasyTranslate.Translators
                     "dtparameter" + "&ie=UTF-8",
                     "at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t" + "&ie=UTF-8")
                 .Replace("single??", "single?");
-                
+
 
             return modifiedUrl;
         }
@@ -142,7 +141,7 @@ namespace EasyTranslate.Translators
 
         private JToken ExtractJson(string jsonString, ref bool isTranscriptionAvaliable)
         {
-            JToken json = JsonConvert.DeserializeObject<JToken>(jsonString);
+            var json = JsonConvert.DeserializeObject<JToken>(jsonString);
 
             isTranscriptionAvaliable = json[0].Count() > 1;
 
@@ -152,14 +151,28 @@ namespace EasyTranslate.Translators
         private string ExtractWord(JToken json, bool isTranscriptionAvaliable)
         {
             var result = "";
-            var translationInfo = json[0];
+            JToken translationInfo = json[0];
 
             var translate = new string[
                 json.Count() - (isTranscriptionAvaliable ? 1 : 0)];
 
-            for (int i = 0; i < translate.Length; i++)
+            for (var i = 0; i < translate.Length; i++)
             {
-                result = (string) json[i][0];
+                JToken wordJToken;
+                try
+                {
+                    wordJToken = translationInfo[i];
+                    if (wordJToken.HasValues)
+                    {
+                        wordJToken = translationInfo[i][0];
+                    }
+                }
+                catch (Exception)
+                {
+                    wordJToken = translationInfo[0][0];
+                }
+
+                result = (string) wordJToken;
             }
 
             return result;
@@ -167,50 +180,13 @@ namespace EasyTranslate.Translators
 
         private TranslateLanguages ExtractLanguage(JToken json)
         {
-            string result = "";
+            var result = "";
 
             result = (string) json[2];
-
+            
             TranslateLanguages language = _map.Find(result).Value;
 
             return language;
-        }
-
-        private static void Main()
-        {
-            var builder = new UriBuilder("https://translate.google.com/translate_a/single");
-
-            var languageMap = new LanguageMap();
-            NameValueCollection query = HttpUtility.ParseQueryString(builder.Query);
-
-            query["client"] = "t";
-
-            query["sl"] = "auto";
-
-            query["tl"] = "fr";
-
-            query["hl"] = "fr";
-
-            query["dt"] = "['at', 'bd', 'ex', 'ld', 'md', 'qca', 'rw', 'rm', 'ss', 't']";
-
-            query["ie"] = "UTF-8";
-
-            query["oe"] = "UTF-8";
-
-            query["otf"] = "1";
-
-            query["ssel"] = "0";
-
-            query["tsel"] = "0";
-
-            query["kc"] = "7";
-
-            query["q"] = "hello";
-
-            builder.Query = query.ToString();
-            //https://translate.google.com/translate_a/single?client=t&sl=auto&tl=en&hl=en&dt=['at', 'bd', 'ex', 'ld', 'md', 'qca', 'rw', 'rm', 'ss', 't']&ie=UTF-8&oe=UTF-8&otf=1&ssel=0&tsel=0&kc=7&q=bonjour
-            WebRequest W = WebRequest.Create(builder.Uri);
-            WebResponse r = W.GetResponse();
         }
     }
 }
