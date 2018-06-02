@@ -5,6 +5,34 @@
     <ApplicationIcon />
     <OutputType>Library</OutputType>
     <StartupObject />
+    <PackageId>TheMulti0.EasyTranslate</PackageId>
+    <Authors>TheMulti0</Authors>
+	<Owners>TheMulti0</Owners>
+	<Title>EasyTranslate</Title>
+	<Summary>Easily translate and detect with no hassle</Summary>
+    <Description>Easily translate and detect with no hassle</Description>
+    <Copyright>MIT License</Copyright>
+    <PackageLicenseUrl>https://github.com/TheMulti0/EasyTranslate/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/TheMulti0/EasyTranslate</PackageProjectUrl>
+    <PackageIconUrl>https://github.com/TheMulti0/EasyTranslate/blob/master/Icon/50x.png?raw=true</PackageIconUrl>
+    <RepositoryUrl>https://github.com/TheMulti0/EasyTranslate</RepositoryUrl>
+    <RepositoryType>GitHub</RepositoryType>
+    <PackageTags>Google_Translate Bing EasyTranslate BingTranslator MicrosoftTranslator Translate Google Translator Google-Translate Google Translate Microsoft</PackageTags>
+    <PackageReleaseNotes>Sorted metadata file</PackageReleaseNotes>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Version>1.0.3</Version>
+    <AssemblyVersion>1.0.3.0</AssemblyVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile></DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

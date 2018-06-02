@@ -63,23 +63,22 @@ namespace EasyTranslate.Translators
 
         private string GetUrl(TranslateWord word, TranslateLanguages lang)
         {
-            var builder = BuildUri(word);
+            UriBuilder builder = BuildUri(word);
 
             var queryString = builder.Query;
             var finalQuery = queryString.Insert(queryString.Length,
                                                 "&dt=['at', 'bd', 'ex', 'ld', 'md', 'qca', 'rw', 'rm', 'ss', 't']");
-
             builder.Query = finalQuery;
 
-            var langValue = lang.GetDescriptionAttributeString();
+            string langValue = lang.GetDescriptionAttributeString();
 
-            var modifiedUrl = builder.Uri
-                                     .ToString()
-                                     .Replace("tl=lang" + "&hl=lang" + "&dt=dtparameter",
-                                              $"tl={langValue}" + $"&hl={langValue}" + "&dt=dtparameter")
-                                     .Replace("dtparameter" + "&ie=UTF-8",
-                                              "at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t" + "&ie=UTF-8")
-                                     .Replace("single??", "single?");
+            string modifiedUrl = builder.Uri
+                .ToString()
+                .Replace("tl=lang" + "&hl=lang" + "&dt=dtparameter",
+                        $"tl={langValue}" + $"&hl={langValue}" + "&dt=dtparameter")
+                .Replace("dtparameter" + "&ie=UTF-8",
+                        "at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t" + "&ie=UTF-8")
+                .Replace("single??", "single?");
 
 
             return modifiedUrl;

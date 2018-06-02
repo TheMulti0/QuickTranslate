@@ -25,7 +25,7 @@ namespace ConsoleApp
             //Console.ReadLine();
 
             //TranslateWord a = new GoogleTranslateClassicTGranslator().Translate(new TranslateWord("hello"), TranslateLanguages.French);
-            TranslateWord a = new GoogleTranslateClassicTranslator().Translate(new TranslateWord("שלום"), TranslateLanguages.Arabic);
+            TranslateWord a = new GoogleTranslateClassicTranslator().Translate(new TranslateWord("שלום לך צדיק"), TranslateLanguages.English);
 
             TranslateWord b = new GoogleTranslateClassicTranslator().Translate(new TranslateWord(a.Word), TranslateLanguages.Hebrew);
 
