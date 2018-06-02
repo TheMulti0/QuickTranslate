@@ -21,7 +21,7 @@ This API is very quick, it uses the same engine that the website itself does, an
  
 ## Release
 
-I am having some problems with releasing this package, but 1.0.0 is out soon!
+EasyTranslate is officialy released! [Check it out!](http://nuget.org/packages/TheMulti0.EasyTranslate/)
 
 ## Contributing
 
@@ -36,7 +36,7 @@ If you find any issue, please list it in the issues, create a pull request and [
 ## Credits
 
 [***JetBrains***](https://www.jetbrains.com/) and [***Visual Studio***](https://www.visualstudio.com/) - awesome tools. <br/>
-[***Newtonsoft.Json***](https://github.com/JamesNK/Newtonsoft.Json) - amazing API! </br>
+[***Newtonsoft.Json***](https://github.com/JamesNK/Newtonsoft.Json) - amazing and easy to use API! </br>
 
 ## <a name="contact">Contact
 
