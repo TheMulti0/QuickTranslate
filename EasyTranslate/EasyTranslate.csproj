@@ -1,5 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <ApplicationIcon />
@@ -7,9 +6,9 @@
     <StartupObject />
     <PackageId>TheMulti0.EasyTranslate</PackageId>
     <Authors>TheMulti0</Authors>
-	<Owners>TheMulti0</Owners>
-	<Title>EasyTranslate</Title>
-	<Summary>Easily translate and detect with no hassle</Summary>
+    <Owners>TheMulti0</Owners>
+    <Title>EasyTranslate</Title>
+    <Summary>Easily translate and detect with no hassle</Summary>
     <Description>Easily translate and detect with no hassle</Description>
     <Copyright>MIT License</Copyright>
     <PackageLicenseUrl>https://github.com/TheMulti0/EasyTranslate/blob/master/LICENSE</PackageLicenseUrl>
@@ -24,19 +23,16 @@
     <Version>1.0.3</Version>
     <AssemblyVersion>1.0.3.0</AssemblyVersion>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebugType>portable</DebugType>
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Debug\</OutputPath>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile></DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
   </ItemGroup>
-
 </Project>

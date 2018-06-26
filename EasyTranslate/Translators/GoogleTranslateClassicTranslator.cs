@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -25,11 +27,17 @@ namespace EasyTranslate.Translators
 
             var isTranscriptionAvaliable = false;
 
-            JToken json = ExtractJson(response, ref isTranscriptionAvaliable);
+            JToken json = JsonParser.ExtractJson(response, ref isTranscriptionAvaliable);
 
-            string resultWord = ExtractWord(json, isTranscriptionAvaliable);
+            string resultWord = JsonParser.ExtractWord(json, isTranscriptionAvaliable);
 
-            var result = new TranslateWord(resultWord, targetLanguage);
+            TranslateWord[] suggestions = JsonParser.ExtractSuggestions(json);
+            string[] description = suggestions.FirstOrDefault(w => w.Word == resultWord)?.Description;
+            var result = new TranslateWord(
+                resultWord,
+                targetLanguage, 
+                suggestions,
+                description);
 
             return result;
         }
@@ -44,9 +52,9 @@ namespace EasyTranslate.Translators
 
             var isTranscriptionAvaliable = false;
 
-            JToken json = ExtractJson(response, ref isTranscriptionAvaliable);
+            JToken json = JsonParser.ExtractJson(response, ref isTranscriptionAvaliable);
 
-            TranslateLanguages language = ExtractLanguage(json);
+            TranslateLanguages language = JsonParser.ExtractLanguage(json);
 
             var result = new TranslateWord(word.Word, language);
 
@@ -87,8 +95,7 @@ namespace EasyTranslate.Translators
         private UriBuilder BuildUri(TranslateWord word)
         {
             var builder = new UriBuilder("https://translate.google.com/translate_a/single");
-            var query = HttpUtility.ParseQueryString("");
-
+            NameValueCollection query = HttpUtility.ParseQueryString("");
 
             query["client"] = "t";
 
@@ -125,64 +132,14 @@ namespace EasyTranslate.Translators
         {
             WebRequest request = WebRequest.CreateHttp(url);
 
-            var response = request.GetResponse();
+            WebResponse response = request.GetResponse();
 
-            var responseStream = response.GetResponseStream();
+            Stream responseStream = response.GetResponseStream();
 
             var reader = new StreamReader(responseStream);
-            var result = reader.ReadToEnd();
+            string result = reader.ReadToEnd();
 
             return result;
-        }
-
-        private JToken ExtractJson(string jsonString, ref bool isTranscriptionAvaliable)
-        {
-            var json = JsonConvert.DeserializeObject<JToken>(jsonString);
-
-            isTranscriptionAvaliable = json[0].Count() > 1;
-
-            return json;
-        }
-
-        private string ExtractWord(JToken json, bool isTranscriptionAvaliable)
-        {
-            var result = "";
-            JToken translationInfo = json[0];
-
-            var translate = new string[
-                json.Count() - (isTranscriptionAvaliable ? 1 : 0)];
-
-            for (var i = 0; i < translate.Length; i++)
-            {
-                JToken wordJToken;
-                try
-                {
-                    wordJToken = translationInfo[i];
-                    if (wordJToken.HasValues)
-                    {
-                        wordJToken = translationInfo[i][0];
-                    }
-                }
-                catch (Exception)
-                {
-                    wordJToken = translationInfo[0][0];
-                }
-
-                result = (string)wordJToken;
-            }
-
-            return result;
-        }
-
-        private TranslateLanguages ExtractLanguage(JToken json)
-        {
-            var result = "";
-
-            result = (string)json[2];
-
-            var language = (TranslateLanguages)result.GetEnum(typeof(TranslateLanguages));
-
-            return language;
         }
     }
 }
