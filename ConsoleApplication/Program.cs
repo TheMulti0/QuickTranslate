@@ -8,7 +8,7 @@ namespace ConsoleApplication
     {
         public static void Main(string[] args)
         {
-            ITranslator translator = new GoogleTranslateClassicTranslator();
+            ITranslator translator = new GoogleTranslator();
             new Program().Translate(translator);
         }
 
