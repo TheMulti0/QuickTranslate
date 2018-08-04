@@ -8,8 +8,7 @@ Check out the [Wiki](https://github.com/TheMulti0/EasyTranslate/wiki/1.-Installi
 
 ## Requirements
 
-For now, the API supports [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard), so it supports all of those slik new frameworks!  
-![alt text](https://i.imgur.com/QxSV63j.png)
+For now, the API supports [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard), so it supports all of those slik new frameworks!
 
 ## How does it work
 
@@ -29,14 +28,12 @@ There isn't any contribution guide right now, but I will be very happy if you wa
 
 If you find any issue, please list it in the issues, create a pull request and [contact me!](#contact)
 
-### Official Contributors
-* [**@TheMulti0**](https://twitter.com/TheMulti0) / [**TheMulti0**](https://github.com/TheMulti0)
 
+## Tools
 
-## Credits
-
-[***JetBrains***](https://www.jetbrains.com/) and [***Visual Studio***](https://www.visualstudio.com/) - awesome tools. <br/>
-[***Newtonsoft.Json***](https://github.com/JamesNK/Newtonsoft.Json) - amazing and easy to use API! </br>
+[<img src="https://www.shalevsoft.co.il/wp-content/uploads/2016/01/JetBrains-ReSharper-2-200x200.jpg">](https://www.jetbrains.com/resharper/)
+[<img src="https://uatsac.sites.cogno-sys.com/wp-content/uploads/sites/33/2016/05/Visual-Studi1.png">](https://www.visualstudio.com)
+[<img src="https://www.newtonsoft.com/content/images/twitterlogo.png" width="200" height="200">](https://github.com/JamesNK/Newtonsoft.Json)</br>
 
 ## <a name="contact">Contact
 
