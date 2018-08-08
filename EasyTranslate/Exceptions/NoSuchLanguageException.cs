@@ -1,5 +1,5 @@
 ﻿using System;
-using EasyTranslate.Enums;
+using EasyTranslate.Words;
 
 namespace EasyTranslate.Exceptions
 {

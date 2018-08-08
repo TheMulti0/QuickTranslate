@@ -1,14 +1,19 @@
-﻿using EasyTranslate.Enums;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using EasyTranslate.Words;
 
 namespace EasyTranslate.Translators
 {
     public interface ITranslator
     {
-        TranslateWord Translate(
+        Task<TranslateWord> TranslateAsync(
             TranslateWord word,
-            TranslateLanguages targetLanguage);
+            TranslateLanguages targetLanguage,
+            CancellationToken token = default(CancellationToken));
 
-        TranslateWord Detect(TranslateWord word, TranslateLanguages randomLanguage = TranslateLanguages.French);
+        Task<TranslateWord> DetectAsync(
+            TranslateWord word,
+            TranslateLanguages randomLanguage = TranslateLanguages.French,
+            CancellationToken token = default(CancellationToken));
     }
 }

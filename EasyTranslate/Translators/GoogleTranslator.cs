@@ -3,9 +3,11 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using EasyTranslate.Checkers;
-using EasyTranslate.Enums;
+using EasyTranslate.Extentions;
 using EasyTranslate.Words;
 using Newtonsoft.Json.Linq;
 
@@ -14,83 +16,111 @@ namespace EasyTranslate.Translators
     public class GoogleTranslator : ITranslator
     {
         private string _token;
+        private CancellationToken _cancellationToken;
+        private JsonParser _parser;
 
-        public TranslateWord Translate(
+        public async Task<TranslateWord> TranslateAsync(
             TranslateWord word,
-            TranslateLanguages targetLanguage)
+            TranslateLanguages targetLanguage,
+            CancellationToken token = default(CancellationToken))
         {
+            _cancellationToken = token;
+            _parser = new JsonParser();
+
             Initialize(word);
 
             string url = GetUrl(word, targetLanguage);
-            string response = GetResponseString(url);
+            string response = await GetResponseStringAsync(url);
             var isTranscriptionAvaliable = false;
 
-            JToken json = JsonParser.ExtractJson(response, ref isTranscriptionAvaliable);
-            string resultWord = JsonParser.ExtractWord(json, isTranscriptionAvaliable);
+            JToken json = _parser.ExtractJson(response, ref isTranscriptionAvaliable);
+            string resultWord = _parser.ExtractWord(json, isTranscriptionAvaliable);
 
-            TranslateWord[] suggestions = JsonParser.ExtractSuggestions(json);
+            TranslateWord[] suggestions = _parser.ExtractSuggestions(json);
             string[] description = suggestions.FirstOrDefault(w => w.Word == resultWord)
-                ?.Description;
-            var result = new TranslateWord(resultWord,
-                                           targetLanguage,
-                                           suggestions,
-                                           description);
+                                              ?.Description;
+            var result = new TranslateWord(resultWord, targetLanguage, suggestions, description);
 
             return result;
         }
 
-        public TranslateWord Detect(
+        public async Task<TranslateWord> DetectAsync(
             TranslateWord word,
-            TranslateLanguages randomLanguage = TranslateLanguages.French)
+            TranslateLanguages randomLanguage = TranslateLanguages.French,
+            CancellationToken token = default(CancellationToken))
         {
+            _cancellationToken = token;
+            _parser = new JsonParser();
+
             Initialize(word);
 
             string url = GetUrl(word, randomLanguage);
 
-            string response = GetResponseString(url);
+            string response = await GetResponseStringAsync(url);
 
             var isTranscriptionAvaliable = false;
 
-            JToken json = JsonParser.ExtractJson(response, ref isTranscriptionAvaliable);
+            JToken json = _parser.ExtractJson(response, ref isTranscriptionAvaliable);
 
-            TranslateLanguages language = JsonParser.ExtractLanguage(json);
+            TranslateLanguages language = _parser.ExtractLanguage(json);
 
             var result = new TranslateWord(word.Word, language);
 
             return result;
         }
 
-        private void Initialize(TranslateWord word)
+        private void CancelIfRequested(CancellationToken token = default(CancellationToken))
         {
-            string tkk = new TkkGenerator().GetTKK();
-            _token = new TokenGenerator().GetToken(word.Word, tkk);
-
-            InternetChecker.CheckForInternetConnection();
+            if (token == default(CancellationToken))
+            {
+                if (_cancellationToken == default(CancellationToken))
+                {
+                    return;
+                }
+                token = _cancellationToken;
+            }
+            if (token.IsCancellationRequested)
+            {
+                token.ThrowIfCancellationRequested();
+            }
         }
 
-        private string GetUrl(
-            TranslateWord word,
-            TranslateLanguages lang)
+        private async void Initialize(TranslateWord word)
+        {
+            var tkkGenerator = new TkkGenerator();
+            string tkk = await tkkGenerator.GetTkkAsync();
+
+            CancelIfRequested();
+            _token = new TokenGenerator().GetToken(word.Word, tkk);
+
+            CancelIfRequested();
+            InternetChecker.CheckForInternetConnection();
+
+            CancelIfRequested();
+        }
+
+        private string GetUrl(TranslateWord word, TranslateLanguages lang)
         {
             UriBuilder builder = BuildUri(word);
 
             string queryString = builder.Query;
-            string finalQuery = queryString.Insert(queryString.Length,
-                                                   "&dt=['at', 'bd', 'ex', 'ld', 'md', 'qca', 'rw', 'rm', 'ss', 't']");
+            string finalQuery = queryString.Insert(
+                queryString.Length,
+                "&dt=['at', 'bd', 'ex', 'ld', 'md', 'qca', 'rw', 'rm', 'ss', 't']");
             builder.Query = finalQuery;
 
             string langValue = lang.GetDescriptionAttributeString();
 
-            string modifiedUrl = builder.Uri
-                .ToString()
-                .Replace("tl=lang" + "&hl=lang" + "&dt=dtparameter",
-                         $"tl={langValue}" + $"&hl={langValue}" + "&dt=dtparameter")
-                .Replace("dtparameter" + "&ie=UTF-8",
-                         "at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t" +
-                         "&ie=UTF-8")
-                .Replace("single??", "single?");
+            string modifiedUrl = builder.Uri.ToString()
+                                        .Replace(
+                                            "tl=lang" + "&hl=lang" + "&dt=dtparameter",
+                                            $"tl={langValue}" + $"&hl={langValue}" + "&dt=dtparameter")
+                                        .Replace(
+                                            "dtparameter" + "&ie=UTF-8",
+                                            "at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t" + "&ie=UTF-8")
+                                        .Replace("single??", "single?");
 
-
+            CancelIfRequested();
             return modifiedUrl;
         }
 
@@ -113,19 +143,25 @@ namespace EasyTranslate.Translators
             query["q"] = word.Word;
 
             builder.Query = query.ToString();
+
+            CancelIfRequested();
             return builder;
         }
 
-        private static string GetResponseString(string url)
+        private async Task<string> GetResponseStringAsync(string url)
         {
             WebRequest request = WebRequest.CreateHttp(url);
 
+            CancelIfRequested();
+            //WebResponse response = await request.GetResponseAsync(_cancellationToken);
             WebResponse response = request.GetResponse();
             Stream responseStream = response.GetResponseStream();
 
+            CancelIfRequested();
             var reader = new StreamReader(responseStream);
-            string result = reader.ReadToEnd();
+            string result = await reader.ReadToEndAsync();
 
+            CancelIfRequested();
             return result;
         }
     }

@@ -4,9 +4,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 
-namespace EasyTranslate.Enums
+namespace EasyTranslate.Extentions
 {
-    public static class EnumParser
+    public static class EnumExtentions
     {
         public static string GetDescriptionAttributeString(this Enum @enum)
         {

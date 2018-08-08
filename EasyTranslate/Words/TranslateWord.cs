@@ -1,6 +1,4 @@
-﻿using EasyTranslate.Enums;
-
-namespace EasyTranslate.Words
+﻿namespace EasyTranslate.Words
 {
     public class TranslateWord
     {

@@ -1,4 +1,6 @@
-﻿using EasyTranslate.Enums;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using EasyTranslate.Translators;
 using EasyTranslate.Words;
 
@@ -9,12 +11,16 @@ namespace ConsoleApplication
         public static void Main(string[] args)
         {
             ITranslator translator = new GoogleTranslator();
-            new Program().Translate(translator);
+            Translate(translator);
         }
 
-        private void Translate(ITranslator translator)
+        private static async void Translate(ITranslator translator)
         {
-            translator.Translate(new TranslateWord("שלום!"), TranslateLanguages.English);
+            var tokenSource = new CancellationTokenSource();
+            CancellationToken cancellationToken = tokenSource.Token;
+            
+            Task<TranslateWord> a = translator.TranslateAsync(new TranslateWord("שלום!"), TranslateLanguages.English, cancellationToken);
+            Console.WriteLine(a.Result.Word);
         }
     }
 }

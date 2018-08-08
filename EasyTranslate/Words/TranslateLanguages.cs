@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace EasyTranslate.Enums
+namespace EasyTranslate.Words
 {
     public enum TranslateLanguages
     {
