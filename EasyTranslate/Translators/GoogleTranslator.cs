@@ -19,6 +19,9 @@ namespace EasyTranslate.Translators
         private CancellationToken _cancellationToken;
         private JsonParser _parser;
 
+        public TranslateWord Translate(TranslateWord word, TranslateLanguages targetLanguage)
+            => TranslateAsync(word, targetLanguage).Result;
+
         public async Task<TranslateWord> TranslateAsync(
             TranslateWord word,
             TranslateLanguages targetLanguage,
@@ -43,6 +46,8 @@ namespace EasyTranslate.Translators
 
             return result;
         }
+
+        public TranslateWord
 
         public async Task<TranslateWord> DetectAsync(
             TranslateWord word,
@@ -153,8 +158,8 @@ namespace EasyTranslate.Translators
             WebRequest request = WebRequest.CreateHttp(url);
 
             CancelIfRequested();
-            //WebResponse response = await request.GetResponseAsync(_cancellationToken);
-            WebResponse response = request.GetResponse();
+            WebResponse response = await request.GetResponseAsync(_cancellationToken);
+            //WebResponse response = request.GetResponse();
             Stream responseStream = response.GetResponseStream();
 
             CancelIfRequested();
