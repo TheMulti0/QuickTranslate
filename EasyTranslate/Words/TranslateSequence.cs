@@ -1,19 +1,21 @@
-﻿namespace EasyTranslate.Words
+﻿using System.Collections.Generic;
+
+namespace EasyTranslate.Words
 {
-    public class TranslateWord
+    public class TranslateSequence
     {
         public string Word { get; }
 
         public TranslateLanguages? Language { get; }
         
-        public TranslateWord[] Suggestions { get; }
+        public IEnumerable<TranslateSequence> Suggestions { get; }
         
         public string[] Description { get; }
 
-        public TranslateWord(
+        public TranslateSequence(
             string word,
             TranslateLanguages? language = null,
-            TranslateWord[] suggestions = null,
+            IEnumerable<TranslateSequence> suggestions = null,
             string[] description = null)
         {
             Word = word;

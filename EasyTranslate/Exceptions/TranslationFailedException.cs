@@ -2,14 +2,14 @@
 
 namespace EasyTranslate.Exceptions
 {
-    public class TranslateFailedException : Exception
+    public class TranslationFailedException : Exception
     {
-        public TranslateFailedException(string message = "Translate Operation Failed.")
+        public TranslationFailedException(string message = "Translate Operation Failed.")
             : base(message)
         {
         }
 
-        public TranslateFailedException(
+        public TranslationFailedException(
             Exception inner, 
             string message = "Translate Operation Failed.")
             : base(message, inner)

@@ -14,12 +14,12 @@ namespace ConsoleApplication
             Translate(translator);
         }
 
-        private static async void Translate(ITranslator translator)
+        private static void Translate(ITranslator translator)
         {
             var tokenSource = new CancellationTokenSource();
             CancellationToken cancellationToken = tokenSource.Token;
             
-            Task<TranslateWord> a = translator.TranslateAsync(new TranslateWord("שלום!"), TranslateLanguages.English, cancellationToken);
+            Task<TranslateSequence> a = translator.TranslateAsync(new TranslateSequence("שלום!"), TranslateLanguages.English, cancellationToken);
             Console.WriteLine(a.Result.Word);
         }
     }

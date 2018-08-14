@@ -11,17 +11,17 @@ namespace EasyTranslate.Extentions
         public static string GetDescriptionAttributeString(this Enum @enum)
         {
             FieldInfo fieldInfo = @enum.GetType().GetField(@enum.ToString());
-            var attributes =
+            DescriptionAttribute[] attributes =
                 (DescriptionAttribute[]) fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), false);
             return attributes.Length > 0
                 ? attributes[0].Description
                 : throw new CustomAttributeFormatException($"No DescriptionAttribute found. {attributes}");
         }
 
-        public static Enum GetEnum(this string value, Type enumType)
+        public static Enum GetEnumByDescription(this string value, Type enumType)
         {
             IEnumerable<string> names = Enum.GetNames(enumType);
-            foreach (var name in names)
+            foreach (string name in names)
             {
                 var enumValue = (Enum) Enum.Parse(enumType, name);
 
@@ -31,7 +31,6 @@ namespace EasyTranslate.Extentions
                 }
             }
 
-            Debug.WriteLine(value);
             throw new ArgumentException("The string does not exist in the enum.");
         }
     }

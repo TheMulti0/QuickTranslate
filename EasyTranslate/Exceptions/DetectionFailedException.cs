@@ -2,15 +2,15 @@
 
 namespace EasyTranslate.Exceptions
 {
-    public class DetectFailedException : Exception
+    public class DetectionFailedException : Exception
     {
-        public DetectFailedException(
+        public DetectionFailedException(
             string message = "Detect Operation Failed.")
             : base(message)
         {
         }
 
-        public DetectFailedException(
+        public DetectionFailedException(
             Exception inner,
             string message = "Detect Operation Failed")
             : base(message, inner)
