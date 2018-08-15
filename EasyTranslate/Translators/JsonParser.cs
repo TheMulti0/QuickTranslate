@@ -18,56 +18,91 @@ namespace EasyTranslate.Translators
             _cancellationToken = token;
         }
 
-        public JToken ExtractJson(string jsonString, out bool isTranscriptionAvaliable)
+        public JToken ExtractJson(string jsonString)
         {
             var json = JsonConvert.DeserializeObject<JToken>(jsonString);
-            isTranscriptionAvaliable = json[0].Count() > 1;
 
             _cancellationToken.ThrowIfCancellationRequested();
             return json;
         }
 
-        public string ExtractWord(JToken json, bool isTranscriptionAvaliable)
+        public string ExtractWord(JToken json)
         {
-            var result = "";
             JToken translationInfo = json[0];
-
-            string[] translate = new string[                json.Count() - (isTranscriptionAvaliable ? 1 : 0)];
+            bool isTranscriptionAvaliable = translationInfo.Count() > 1;
+            string[] translate = new string[translationInfo.Count() - (isTranscriptionAvaliable ? 1 : 0)];
 
             for (var i = 0; i < translate.Length; i++)
             {
-                result = FindWord(translationInfo, i);
+                try
+                {
+                    var info = (string)translationInfo[i][0];
+                    translate[i] = info;
+                }
+                catch
+                {
+                    // ignored
+                }
             }
 
+            string result = translate[0] ?? translate.FirstOrDefault(s => !string.IsNullOrEmpty(s));
+            if (!isTranscriptionAvaliable)
+            {
+                return result;
+            }
+
+            GetTranscription(translationInfo, out result);
+
             _cancellationToken.ThrowIfCancellationRequested();
+
             return result;
         }
 
-        private string FindWord(JToken translationInfo, int i)
+        private static void GetTranscription(JToken translationInfo, out string translatedWord)
         {
-            JToken wordJToken;
-            try
+            JToken transcriptionInfo = translationInfo[translationInfo.Count() - 1];
+            int transcriptionCount = transcriptionInfo.Count();
+
+            JToken last = transcriptionInfo[transcriptionCount - 1];
+            if (transcriptionCount == 3)
             {
-                wordJToken = translationInfo[i];
-                if (wordJToken.HasValues)
+                translatedWord = (string) last;
+            }
+            else
+            {
+                JToken secondLast = transcriptionInfo[transcriptionCount - 2];
+                if (secondLast != null)
                 {
-                    wordJToken = translationInfo[i][0];
+                    translatedWord = (string) secondLast;
+                }
+                else
+                {
+                    translatedWord = (string) last;
                 }
             }
-            catch (Exception)
-            {
-                wordJToken = translationInfo[0][0];
-            }
+        }
 
-            var result = (string) wordJToken;
+        public TranslateLanguages ExtractLanguage(JToken json)
+        {
+            var result = (string) json[2];
+
+            var language = (TranslateLanguages) result.GetEnumByDescription(typeof(TranslateLanguages));
             _cancellationToken.ThrowIfCancellationRequested();
-            return result;
+            return language;
         }
 
         public IEnumerable<TranslateSequence> ExtractSuggestions(JToken json)
         {
-            JToken suggestions = json[1]?[0]?[2];
+            JToken suggestions;
             Dictionary<string, List<string>> dictionary = new Dictionary<string, List<string>>();
+            try
+            {
+                suggestions = json[1]?[0]?[2] ?? json[1]?[0];
+            }
+            catch
+            {
+                return ConvertDictionaryToTranslateWord(dictionary);
+            }
 
             if (suggestions == null)
             {
@@ -114,13 +149,7 @@ namespace EasyTranslate.Translators
             dictionary.Add(key, list);
         }
 
-        public TranslateLanguages ExtractLanguage(JToken json)
-        {
-            var result = (string) json[2];
-
-            var language = (TranslateLanguages) result.GetEnumByDescription(typeof(TranslateLanguages));
-            _cancellationToken.ThrowIfCancellationRequested();
-            return language;
-        }
+        //public string[] ExtractSeeAlso(JToken json)
+        //    => !json.HasValues ? new string[0] : 
     }
 }
