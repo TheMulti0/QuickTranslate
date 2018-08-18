@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using EasyTranslate.Exceptions;
 using EasyTranslate.Extentions;
-using EasyTranslate.Words;
+using EasyTranslate.TranslationData;
 using Newtonsoft.Json.Linq;
 
 namespace EasyTranslate.Translators
@@ -48,7 +48,7 @@ namespace EasyTranslate.Translators
                 string url = await new UrlBuilder().GetUrl(sequence, targetLanguage);
                 string response = await GetResponseStringAsync(url);
 
-                var parser = new JsonParser(_cancellationToken);
+                var parser = new TranslationInfoParser(_cancellationToken);
                 JToken json = parser.ExtractJson(response);
                 string resultWord = parser.ExtractWord(json);
 
@@ -97,7 +97,7 @@ namespace EasyTranslate.Translators
                 string url = await new UrlBuilder().GetUrl(sequence, TranslateLanguages.English);
                 string response = await GetResponseStringAsync(url);
 
-                var parser = new JsonParser(_cancellationToken);
+                var parser = new TranslationInfoParser(_cancellationToken);
                 JToken json = parser.ExtractJson(response);
                 TranslateLanguages language = parser.ExtractLanguage(json);
 

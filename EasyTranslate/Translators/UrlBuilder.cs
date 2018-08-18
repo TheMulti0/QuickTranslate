@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using EasyTranslate.Extentions;
-using EasyTranslate.Words;
+using EasyTranslate.TranslationData;
 
 namespace EasyTranslate.Translators
 {

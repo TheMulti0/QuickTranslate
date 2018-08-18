@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using EasyTranslate.Exceptions;
 using EasyTranslate.Extentions;
-using EasyTranslate.Words;
+using EasyTranslate.TranslationData;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace EasyTranslate.Translators
 {
-    internal class JsonParser
+    internal class TranslationInfoParser
     {
         private readonly CancellationToken _cancellationToken;
 
-        public JsonParser(CancellationToken token)
+        public TranslationInfoParser(CancellationToken token)
         {
             _cancellationToken = token;
         }
@@ -29,57 +29,50 @@ namespace EasyTranslate.Translators
         public string ExtractWord(JToken json)
         {
             JToken translationInfo = json[0];
-            bool isTranscriptionAvaliable = translationInfo.Count() > 1;
-            string[] translate = new string[translationInfo.Count() - (isTranscriptionAvaliable ? 1 : 0)];
+            int infoCount = translationInfo.Count();
+            bool isTranscriptionAvaliable = infoCount > 1;
+            string[] translate = new string[infoCount - (isTranscriptionAvaliable ? 1 : 0)];
 
             for (var i = 0; i < translate.Length; i++)
             {
-                try
-                {
-                    var info = (string)translationInfo[i][0];
-                    translate[i] = info;
-                }
-                catch
-                {
-                    // ignored
-                }
+                var info = (string) translationInfo[i][0];
+                translate[i] = info;
             }
 
-            string result = translate[0] ?? translate.FirstOrDefault(s => !string.IsNullOrEmpty(s));
+            string result = translate.First() ?? translate.FirstOrDefault(s => !string.IsNullOrEmpty(s));
             if (!isTranscriptionAvaliable)
             {
                 return result;
             }
-
-            GetTranscription(translationInfo, out result);
-
-            _cancellationToken.ThrowIfCancellationRequested();
-
-            return result;
+            var transcription = (string) GetTranscription(translationInfo);
+            return result.EndsWith(" ")
+                ? result + transcription
+                : result + " " + transcription;
         }
 
-        private static void GetTranscription(JToken translationInfo, out string translatedWord)
+        private static JToken GetTranscription(JToken translationInfo)
         {
-            JToken transcriptionInfo = translationInfo[translationInfo.Count() - 1];
+            if (!translationInfo.Any())
+            {
+                throw new TranslationFailedException();
+            }
+            JToken transcriptionInfo = translationInfo.Last();
             int transcriptionCount = transcriptionInfo.Count();
+            if (transcriptionCount < 3)
+            {
+                throw new TranslationFailedException();
+            }
 
             JToken last = transcriptionInfo[transcriptionCount - 1];
-            if (transcriptionCount == 3)
+            JToken secondLast = transcriptionInfo[transcriptionCount - 2];
+
+            if (last != null &&
+                (secondLast == null || transcriptionCount == 3))
             {
-                translatedWord = (string) last;
+                return last;
             }
-            else
-            {
-                JToken secondLast = transcriptionInfo[transcriptionCount - 2];
-                if (secondLast != null)
-                {
-                    translatedWord = (string) secondLast;
-                }
-                else
-                {
-                    translatedWord = (string) last;
-                }
-            }
+
+            return transcriptionInfo.FirstOrDefault(token => token != null);
         }
 
         public TranslateLanguages ExtractLanguage(JToken json)
@@ -101,12 +94,12 @@ namespace EasyTranslate.Translators
             }
             catch
             {
-                return ConvertDictionaryToTranslateWord(dictionary);
+                return dictionary.ToTranslateSequence();
             }
 
             if (suggestions == null)
             {
-                return ConvertDictionaryToTranslateWord(dictionary);
+                return dictionary.ToTranslateSequence();
             }
             foreach (JToken suggestion in suggestions)
             {
@@ -119,19 +112,7 @@ namespace EasyTranslate.Translators
             }
             _cancellationToken.ThrowIfCancellationRequested();
 
-            return ConvertDictionaryToTranslateWord(dictionary);
-        }
-
-        private IEnumerable<TranslateSequence> ConvertDictionaryToTranslateWord(Dictionary<string, List<string>> dictionary)
-        {
-            List<TranslateSequence> words = new List<TranslateSequence>();
-            foreach (KeyValuePair<string, List<string>> pair in dictionary)
-            {
-                var word = new TranslateSequence(pair.Key, description: pair.Value.ToArray());
-                words.Add(word);
-            }
-            _cancellationToken.ThrowIfCancellationRequested();
-            return words;
+            return dictionary.ToTranslateSequence();
         }
 
         private void FindWordProperties(JToken suggestion, IDictionary<string, List<string>> dictionary)
@@ -140,10 +121,10 @@ namespace EasyTranslate.Translators
 
             List<string> list =
                 (
-                from item in suggestion[1]
-                where !string.IsNullOrWhiteSpace(item?.ToString())
-                select item.ToString()
-                ).ToList();
+                    from item in suggestion[1]
+                    where !string.IsNullOrWhiteSpace(item?.ToString())
+                    select item.ToString()
+                    ).ToList();
 
             _cancellationToken.ThrowIfCancellationRequested();
             dictionary.Add(key, list);

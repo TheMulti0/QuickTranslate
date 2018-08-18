@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using EasyTranslate.Words;
+using EasyTranslate.TranslationData;
 
 namespace EasyTranslate.Translators
 {
