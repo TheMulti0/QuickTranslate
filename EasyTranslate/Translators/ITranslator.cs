@@ -6,19 +6,13 @@ namespace EasyTranslate.Translators
 {
     public interface ITranslator
     {
-        TranslateSequence Translate(
-            TranslateSequence sequence,
-            TranslateLanguages targetLanguage);
-
-        Task<TranslateSequence> TranslateAsync(
-            TranslateSequence sequence,
+        Task<TranslationSequence> TranslateAsync(
+            TranslationSequence sequence,
             TranslateLanguages targetLanguage,
             CancellationToken token = default(CancellationToken));
-
-        TranslateSequence Detect(TranslateSequence sequence);
-
-        Task<TranslateSequence> DetectAsync(
-            TranslateSequence sequence,
+        
+        Task<TranslationSequence> DetectAsync(
+            TranslationSequence sequence,
             CancellationToken token = default(CancellationToken));
     }
 }

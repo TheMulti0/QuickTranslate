@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using EasyTranslate.TranslationData;
 using EasyTranslate.Translators;
-using EasyTranslate.Words;
 
 namespace ConsoleApplication
 {
@@ -19,11 +19,11 @@ namespace ConsoleApplication
             var tokenSource = new CancellationTokenSource();
             CancellationToken cancellationToken = tokenSource.Token;
             
-            Task<TranslateSequence> a = translator.TranslateAsync(new TranslateSequence("שלום!"), TranslateLanguages.English, cancellationToken);
+            Task<TranslationSequence> a = translator.TranslateAsync(new TranslationSequence("שלום!"), TranslateLanguages.English, cancellationToken);
             Console.WriteLine(a.Result.Word);
-            //TranslateSequence c = await translator.TranslateAsync(new TranslateSequence("שלום! באמת"), TranslateLanguages.English, cancellationToken);
+            //TranslationSequence c = await translator.TranslateAsync(new TranslationSequence("שלום! באמת"), TranslateLanguages.English, cancellationToken);
             //Console.WriteLine(c.Word);
-            TranslateSequence b = translator.Translate(new TranslateSequence("שלום! לא באמת"), TranslateLanguages.English);
+            TranslationSequence b = translator.Translate(new TranslationSequence("שלום! לא באמת"), TranslateLanguages.English);
             Console.WriteLine(b.Word);
             Console.ReadLine();
         }

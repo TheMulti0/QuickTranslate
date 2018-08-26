@@ -10,7 +10,7 @@ namespace EasyTranslate.Translators
 {
     internal class UrlBuilder
     {
-        public async Task<string> GetUrl(TranslateSequence sequence, TranslateLanguages lang)
+        public async Task<string> GetUrl(TranslationSequence sequence, TranslateLanguages lang)
         {
             string token = await GetTokenAsync(sequence);
 
@@ -38,7 +38,7 @@ namespace EasyTranslate.Translators
             return builder.Uri.ToString();
         }
 
-        private static async Task<string> GetTokenAsync(TranslateSequence sequence)
+        private static async Task<string> GetTokenAsync(TranslationSequence sequence)
         {
             var tkkGenerator = new TkkGenerator();
             string tkk = await tkkGenerator.GetTkkAsync();

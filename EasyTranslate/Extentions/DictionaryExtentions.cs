@@ -5,12 +5,12 @@ namespace EasyTranslate.Extentions
 {
     public static class DictionaryExtentions
     {
-        public static IEnumerable<TranslateSequence> ToTranslateSequence(this Dictionary<string, List<string>> dictionary)
+        public static IEnumerable<TranslationSequence> ToTranslationSequence(this Dictionary<string, List<string>> dictionary)
         {
-            List<TranslateSequence> words = new List<TranslateSequence>();
+            List<TranslationSequence> words = new List<TranslationSequence>();
             foreach (KeyValuePair<string, List<string>> pair in dictionary)
             {
-                var word = new TranslateSequence(pair.Key, description: pair.Value.ToArray());
+                var word = new TranslationSequence(pair.Key, description: pair.Value.ToArray());
                 words.Add(word);
             }
             return words;

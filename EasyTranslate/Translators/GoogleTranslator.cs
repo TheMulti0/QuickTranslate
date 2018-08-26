@@ -15,18 +15,7 @@ namespace EasyTranslate.Translators
     public class GoogleTranslator : ITranslator
     {
         private CancellationToken _cancellationToken;
-
-        /// <summary>
-        /// Translation of a sequence from language to language
-        /// </summary>
-        /// <param name="sequence">The desired sequence to translate</param>
-        /// <param name="targetLanguage">The language desired to translate the sequence to</param>
-        /// <exception cref="TranslationFailedException">Thrown if the translation operation fails</exception>
-        /// <returns>A new sequence containing the translated sequence, its language and additional information</returns>
-        /// <seealso cref="TranslateAsync"/>
-        public TranslateSequence Translate(TranslateSequence sequence, TranslateLanguages targetLanguage)
-            => TranslateAsync(sequence, targetLanguage).Result;
-
+        
         /// <summary>
         /// Asynchronous translation of a sequence from language to language
         /// </summary>
@@ -35,9 +24,9 @@ namespace EasyTranslate.Translators
         /// <param name="token">An optional cancellation token to cancel the operation</param>
         /// <exception cref="TranslationFailedException">Thrown if the translation operation fails</exception>
         /// <returns>A new sequence containing the translated sequence, its language and additional information</returns>
-        /// <seealso cref="Translate"/>
-        public async Task<TranslateSequence> TranslateAsync(
-            TranslateSequence sequence,
+        /// <seealso cref="DetectAsync"/>
+        public async Task<TranslationSequence> TranslateAsync(
+            TranslationSequence sequence,
             TranslateLanguages targetLanguage,
             CancellationToken token = default(CancellationToken))
         {
@@ -52,14 +41,14 @@ namespace EasyTranslate.Translators
                 JToken json = parser.ExtractJson(response);
                 string resultWord = parser.ExtractWord(json);
 
-                IEnumerable<TranslateSequence> suggestions = parser.ExtractSuggestions(json);
-                TranslateSequence[] suggestionsArray = suggestions.ToArray();
+                IEnumerable<TranslationSequence> suggestions = parser.ExtractSuggestions(json);
+                TranslationSequence[] suggestionsArray = suggestions.ToArray();
 
-                TranslateSequence descriptionWord = suggestionsArray
+                TranslationSequence descriptionWord = suggestionsArray
                     .FirstOrDefault(w => w.Word == resultWord) ?? suggestionsArray.FirstOrDefault();
                 string[] description = descriptionWord?.Description;
 
-                var result = new TranslateSequence(resultWord, targetLanguage/*, suggestionsArray.Skip(1), description*/);
+                var result = new TranslationSequence(resultWord, targetLanguage/*, suggestionsArray.Skip(1), description*/);
                 return result;
             }
             catch (Exception e)
@@ -69,25 +58,15 @@ namespace EasyTranslate.Translators
         }
 
         /// <summary>
-        /// Sequence language detection
-        /// </summary>
-        /// <param name="sequence">The desired sequence to detect its language</param>
-        /// <exception cref="DetectionFailedException">Thrown if the detection operation fails</exception>
-        /// <returns>A new sequence containing the original word, and the detected language</returns>
-        /// <seealso cref="DetectAsync"/>
-        public TranslateSequence Detect(TranslateSequence sequence)
-            => DetectAsync(sequence).Result;
-
-        /// <summary>
         /// Asynchronous sequence language detection
         /// </summary>
         /// <param name="sequence">The desired sequence to detect its language</param>
         /// <param name="token">An optional cancellation token to cancel the operation</param>
         /// <exception cref="DetectionFailedException">Thrown if the detection operation fails</exception>
         /// <returns>A new sequence containing the original word, and the detected language</returns>
-        /// <seealso cref="Detect"/>
-        public async Task<TranslateSequence> DetectAsync(
-            TranslateSequence sequence,
+        /// <seealso cref="TranslateAsync"/>
+        public async Task<TranslationSequence> DetectAsync(
+            TranslationSequence sequence,
             CancellationToken token = default(CancellationToken))
         {
             try
@@ -101,7 +80,7 @@ namespace EasyTranslate.Translators
                 JToken json = parser.ExtractJson(response);
                 TranslateLanguages language = parser.ExtractLanguage(json);
 
-                var result = new TranslateSequence(sequence.Word, language);
+                var result = new TranslationSequence(sequence.Word, language);
                 return result;
             }
             catch (Exception e)

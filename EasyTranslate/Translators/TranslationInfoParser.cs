@@ -29,6 +29,10 @@ namespace EasyTranslate.Translators
         public string ExtractWord(JToken json)
         {
             JToken translationInfo = json[0];
+            if (!translationInfo.Any())
+            {
+                throw new TranslationFailedException("Translation info is empty.");
+            }
             int infoCount = translationInfo.Count();
             bool isTranscriptionAvaliable = infoCount > 1;
             string[] translate = new string[infoCount - (isTranscriptionAvaliable ? 1 : 0)];
@@ -52,15 +56,11 @@ namespace EasyTranslate.Translators
 
         private static JToken GetTranscription(JToken translationInfo)
         {
-            if (!translationInfo.Any())
-            {
-                throw new TranslationFailedException();
-            }
             JToken transcriptionInfo = translationInfo.Last();
             int transcriptionCount = transcriptionInfo.Count();
             if (transcriptionCount < 3)
             {
-                throw new TranslationFailedException();
+                throw new TranslationFailedException("Transcription count is smaller than 3");
             }
 
             JToken last = transcriptionInfo[transcriptionCount - 1];
@@ -84,8 +84,9 @@ namespace EasyTranslate.Translators
             return language;
         }
 
-        public IEnumerable<TranslateSequence> ExtractSuggestions(JToken json)
+        public IEnumerable<TranslationSequence> ExtractSuggestions(JToken json)
         {
+
             JToken suggestions;
             Dictionary<string, List<string>> dictionary = new Dictionary<string, List<string>>();
             try
@@ -94,12 +95,12 @@ namespace EasyTranslate.Translators
             }
             catch
             {
-                return dictionary.ToTranslateSequence();
+                return dictionary.ToTranslationSequence();
             }
 
             if (suggestions == null)
             {
-                return dictionary.ToTranslateSequence();
+                return dictionary.ToTranslationSequence();
             }
             foreach (JToken suggestion in suggestions)
             {
@@ -112,7 +113,7 @@ namespace EasyTranslate.Translators
             }
             _cancellationToken.ThrowIfCancellationRequested();
 
-            return dictionary.ToTranslateSequence();
+            return dictionary.ToTranslationSequence();
         }
 
         private void FindWordProperties(JToken suggestion, IDictionary<string, List<string>> dictionary)
