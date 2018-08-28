@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using EasyTranslate.Exceptions;
@@ -9,24 +10,12 @@ using Newtonsoft.Json.Linq;
 
 namespace EasyTranslate.Translators
 {
-    internal class TranslationInfoParser
+    public static class TranslationInfoParser
     {
-        private readonly CancellationToken _cancellationToken;
+        public static JToken ExtractJson(string jsonString) 
+            => JsonConvert.DeserializeObject<JToken>(jsonString);
 
-        public TranslationInfoParser(CancellationToken token)
-        {
-            _cancellationToken = token;
-        }
-
-        public JToken ExtractJson(string jsonString)
-        {
-            var json = JsonConvert.DeserializeObject<JToken>(jsonString);
-
-            _cancellationToken.ThrowIfCancellationRequested();
-            return json;
-        }
-
-        public string ExtractWord(JToken json)
+        public static string ExtractWord(JToken json)
         {
             JToken translationInfo = json[0];
             if (!translationInfo.Any())
@@ -75,48 +64,96 @@ namespace EasyTranslate.Translators
             return transcriptionInfo.FirstOrDefault(token => token != null);
         }
 
-        public TranslateLanguages ExtractLanguage(JToken json)
+        public static TranslateLanguages ExtractLanguage(JToken json)
         {
             var result = (string) json[2];
-
-            var language = (TranslateLanguages) result.GetEnumByDescription(typeof(TranslateLanguages));
-            _cancellationToken.ThrowIfCancellationRequested();
-            return language;
+            return (TranslateLanguages) result.GetEnumByDescription(typeof(TranslateLanguages));
         }
 
-        public IEnumerable<TranslationSequence> ExtractSuggestions(JToken json)
+        public static IEnumerable<ExtraTranslation> NewSuggestions(JToken json)
         {
-
-            JToken suggestions;
-            Dictionary<string, List<string>> dictionary = new Dictionary<string, List<string>>();
-            try
+            if (json[1]?.HasValues == null)
             {
-                suggestions = json[1]?[0]?[2] ?? json[1]?[0];
-            }
-            catch
-            {
-                return dictionary.ToTranslationSequence();
+                return null;
             }
 
-            if (suggestions == null)
+            JToken suggestions = json[1][0];
+            if (suggestions?.HasValues == null)
             {
-                return dictionary.ToTranslationSequence();
+                return null;
             }
-            foreach (JToken suggestion in suggestions)
+            if (suggestions.Count() == 1)
             {
-                if (!suggestion.HasValues)
+                return null;
+            }
+
+            var type = (string) suggestions[0];
+            object enumObject = Enum.Parse(typeof(TranslationType), type.FirstCharToUpper());
+            var @enum = (TranslationType) enumObject;
+            List<ExtraTranslation> finalSuggestions = new List<ExtraTranslation>();
+            foreach (JToken suggestion in suggestions.Skip(1))
+            {
+                JToken firstOrDefault = suggestion.FirstOrDefault();
+                if (!suggestion.HasValues ||
+                    !firstOrDefault.HasValues)
                 {
                     continue;
                 }
-
-                FindWordProperties(suggestion, dictionary);
+                string name = null;
+                foreach (JToken s in suggestion)
+                {
+                    if (!s.HasValues)
+                    {
+                        name = (string) s;
+                        continue;
+                    }
+                    JArray array = JArray.Parse(s.ToString());
+                    IEnumerable<string> description = array.ToObject<IEnumerable<string>>();
+                    var extra = new ExtraTranslation
+                    {
+                        Type = @enum,
+                        Name = name ?? throw new InvalidOperationException("Suggestion name was null."),
+                        Words = description.ToArray()
+                    };
+                    finalSuggestions.Add(extra);
+                }
             }
-            _cancellationToken.ThrowIfCancellationRequested();
+            return finalSuggestions;
 
-            return dictionary.ToTranslationSequence();
         }
 
-        private void FindWordProperties(JToken suggestion, IDictionary<string, List<string>> dictionary)
+        //public IEnumerable<TranslationSequence> ExtractSuggestions(JToken json)
+        //{
+        //    JToken suggestions;
+        //    Dictionary<string, List<string>> dictionary = new Dictionary<string, List<string>>();
+        //    try
+        //    {
+        //        suggestions = json[1]?[0]?[2] ?? json[1]?[0];
+        //    }
+        //    catch
+        //    {
+        //        return dictionary.ToExtraTranslationArray();
+        //    }
+
+        //    if (suggestions == null)
+        //    {
+        //        return dictionary.ToExtraTranslationArray();
+        //    }
+        //    foreach (JToken suggestion in suggestions)
+        //    {
+        //        if (!suggestion.HasValues)
+        //        {
+        //            continue;
+        //        }
+
+        //        FindWordProperties(suggestion, dictionary);
+        //    }
+        //    _cancellationToken.ThrowIfCancellationRequested();
+
+        //    return dictionary.ToExtraTranslationArray();
+        //}
+
+        private static void FindWordProperties(JToken suggestion, IDictionary<string, List<string>> dictionary)
         {
             string key = suggestion[0].ToString();
 
@@ -127,7 +164,6 @@ namespace EasyTranslate.Translators
                     select item.ToString()
                     ).ToList();
 
-            _cancellationToken.ThrowIfCancellationRequested();
             dictionary.Add(key, list);
         }
 

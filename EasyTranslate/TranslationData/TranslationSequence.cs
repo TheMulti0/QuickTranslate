@@ -1,4 +1,6 @@
-﻿namespace EasyTranslate.TranslationData
+﻿using System.Collections.Generic;
+
+namespace EasyTranslate.TranslationData
 {
     public class TranslationSequence
     {
@@ -8,21 +10,17 @@
 
         public string[] Description { get; }
 
-        public TranslationType? Type { get; }
-
-        public TranslationSequence[] Suggestions { get; }
+        public IEnumerable<ExtraTranslation> Suggestions { get; }
 
         public TranslationSequence(
             string word,
             TranslateLanguages? language = null,
             string[] description = null,
-            TranslationType? type = null,
-            TranslationSequence[] suggestions = null)
+            IEnumerable<ExtraTranslation> suggestions = null)
         {
             Word = word;
             Language = language;
             Description = description;
-            Type = type;
             Suggestions = suggestions;
         }
     }

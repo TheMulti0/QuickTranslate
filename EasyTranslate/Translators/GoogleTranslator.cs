@@ -37,18 +37,17 @@ namespace EasyTranslate.Translators
                 string url = await new UrlBuilder().GetUrl(sequence, targetLanguage);
                 string response = await GetResponseStringAsync(url);
 
-                var parser = new TranslationInfoParser(_cancellationToken);
-                JToken json = parser.ExtractJson(response);
-                string resultWord = parser.ExtractWord(json);
+                JToken json = TranslationInfoParser.ExtractJson(response);
+                string resultWord = TranslationInfoParser.ExtractWord(json);
 
-                IEnumerable<TranslationSequence> suggestions = parser.ExtractSuggestions(json);
-                TranslationSequence[] suggestionsArray = suggestions.ToArray();
+                IEnumerable<ExtraTranslation> suggestions = TranslationInfoParser.NewSuggestions(json);
+                ExtraTranslation[] suggestionsArray = suggestions.ToArray();
 
-                TranslationSequence descriptionWord = suggestionsArray
-                    .FirstOrDefault(w => w.Word == resultWord) ?? suggestionsArray.FirstOrDefault();
-                string[] description = descriptionWord?.Description;
+                ExtraTranslation descriptionWord = suggestionsArray
+                    .FirstOrDefault(desc => desc.Name == resultWord) ?? suggestionsArray.FirstOrDefault();
+                string[] description = descriptionWord?.Words;
 
-                var result = new TranslationSequence(resultWord, targetLanguage/*, suggestionsArray.Skip(1), description*/);
+                var result = new TranslationSequence(resultWord, targetLanguage, description, suggestionsArray.Skip(1));
                 return result;
             }
             catch (Exception e)
@@ -76,9 +75,8 @@ namespace EasyTranslate.Translators
                 string url = await new UrlBuilder().GetUrl(sequence, TranslateLanguages.English);
                 string response = await GetResponseStringAsync(url);
 
-                var parser = new TranslationInfoParser(_cancellationToken);
-                JToken json = parser.ExtractJson(response);
-                TranslateLanguages language = parser.ExtractLanguage(json);
+                JToken json = TranslationInfoParser.ExtractJson(response);
+                TranslateLanguages language = TranslationInfoParser.ExtractLanguage(json);
 
                 var result = new TranslationSequence(sequence.Word, language);
                 return result;
