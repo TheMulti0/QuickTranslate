@@ -5,7 +5,7 @@ namespace EasyTranslate.Extentions
 {
     public static class StringExtensions
     {
-        public static string FirstCharToUpper(this string input)
+        public static string CapitalizeFirstLetter(this string input)
         {
             switch (input)
             {

@@ -16,15 +16,6 @@ namespace EasyTranslate.Translators
     {
         private CancellationToken _cancellationToken;
         
-        /// <summary>
-        /// Asynchronous translation of a sequence from language to language
-        /// </summary>
-        /// <param name="sequence">The desired sequence to translate</param>
-        /// <param name="targetLanguage">The language desired to translate the sequence to</param>
-        /// <param name="token">An optional cancellation token to cancel the operation</param>
-        /// <exception cref="TranslationFailedException">Thrown if the translation operation fails</exception>
-        /// <returns>A new sequence containing the translated sequence, its language and additional information</returns>
-        /// <seealso cref="DetectAsync"/>
         public async Task<TranslationSequence> TranslateAsync(
             TranslationSequence sequence,
             TranslateLanguages targetLanguage,
@@ -40,14 +31,17 @@ namespace EasyTranslate.Translators
                 JToken json = TranslationInfoParser.ExtractJson(response);
                 string resultWord = TranslationInfoParser.ExtractWord(json);
 
-                IEnumerable<ExtraTranslation> suggestions = TranslationInfoParser.NewSuggestions(json);
-                ExtraTranslation[] suggestionsArray = suggestions.ToArray();
+                IEnumerable<ExtraTranslation> suggestions = TranslationInfoParser.ExtractSuggestions(json);
 
-                ExtraTranslation descriptionWord = suggestionsArray
-                    .FirstOrDefault(desc => desc.Name == resultWord) ?? suggestionsArray.FirstOrDefault();
-                string[] description = descriptionWord?.Words;
+                ExtraTranslation descriptionWord = suggestions
+                    .FirstOrDefault(desc => desc.Name == resultWord);
+                IEnumerable<string> description = descriptionWord?.Words;
+                if (descriptionWord != null)
+                {
+                    suggestions = suggestions.Skip(1);
+                }
 
-                var result = new TranslationSequence(resultWord, targetLanguage, description, suggestionsArray.Skip(1));
+                var result = new TranslationSequence(resultWord, targetLanguage, description, suggestions);
                 return result;
             }
             catch (Exception e)
@@ -56,14 +50,6 @@ namespace EasyTranslate.Translators
             }
         }
 
-        /// <summary>
-        /// Asynchronous sequence language detection
-        /// </summary>
-        /// <param name="sequence">The desired sequence to detect its language</param>
-        /// <param name="token">An optional cancellation token to cancel the operation</param>
-        /// <exception cref="DetectionFailedException">Thrown if the detection operation fails</exception>
-        /// <returns>A new sequence containing the original word, and the detected language</returns>
-        /// <seealso cref="TranslateAsync"/>
         public async Task<TranslationSequence> DetectAsync(
             TranslationSequence sequence,
             CancellationToken token = default(CancellationToken))

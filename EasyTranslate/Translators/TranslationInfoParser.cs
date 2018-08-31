@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using EasyTranslate.Exceptions;
 using EasyTranslate.Extentions;
 using EasyTranslate.TranslationData;
@@ -70,7 +69,7 @@ namespace EasyTranslate.Translators
             return (TranslateLanguages) result.GetEnumByDescription(typeof(TranslateLanguages));
         }
 
-        public static IEnumerable<ExtraTranslation> NewSuggestions(JToken json)
+        public static IEnumerable<ExtraTranslation> ExtractSuggestions(JToken json)
         {
             if (json[1]?.HasValues == null)
             {
@@ -88,86 +87,70 @@ namespace EasyTranslate.Translators
             }
 
             var type = (string) suggestions[0];
-            object enumObject = Enum.Parse(typeof(TranslationType), type.FirstCharToUpper());
+            object enumObject = Enum.Parse(typeof(TranslationType), type.CapitalizeFirstLetter());
             var @enum = (TranslationType) enumObject;
+
+            return GetSuggestions(suggestions, @enum);
+
+        }
+
+        private static IEnumerable<ExtraTranslation> GetSuggestions(JToken suggestions, TranslationType @enum)
+        {
             List<ExtraTranslation> finalSuggestions = new List<ExtraTranslation>();
-            foreach (JToken suggestion in suggestions.Skip(1))
+            foreach (JToken s in suggestions.Skip(1))
             {
-                JToken firstOrDefault = suggestion.FirstOrDefault();
-                if (!suggestion.HasValues ||
-                    !firstOrDefault.HasValues)
+                if (!s.HasValues ||
+                    !s.FirstOrDefault()
+                        .HasValues)
                 {
                     continue;
                 }
-                string name = null;
-                foreach (JToken s in suggestion)
+                List<string> names = new List<string>();
+
+                foreach (JToken suggestion in s)
                 {
-                    if (!s.HasValues)
+                    foreach (JToken small in suggestion)
                     {
-                        name = (string) s;
-                        continue;
+                        if (small.HasValues)
+                        {
+                            JArray array = JArray.Parse(small.ToString());
+                            IEnumerable<string> descriptions = array.ToObject<IEnumerable<string>>();
+                            names.ForEach(
+                                name => ValidateSuggestions(new ExtraTranslation(@enum, name, descriptions), finalSuggestions));
+                            break;
+                        }
+                        names.Add((string) small);
                     }
-                    JArray array = JArray.Parse(s.ToString());
-                    IEnumerable<string> description = array.ToObject<IEnumerable<string>>();
-                    var extra = new ExtraTranslation
-                    {
-                        Type = @enum,
-                        Name = name ?? throw new InvalidOperationException("Suggestion name was null."),
-                        Words = description.ToArray()
-                    };
-                    finalSuggestions.Add(extra);
                 }
             }
             return finalSuggestions;
-
         }
 
-        //public IEnumerable<TranslationSequence> ExtractSuggestions(JToken json)
-        //{
-        //    JToken suggestions;
-        //    Dictionary<string, List<string>> dictionary = new Dictionary<string, List<string>>();
-        //    try
-        //    {
-        //        suggestions = json[1]?[0]?[2] ?? json[1]?[0];
-        //    }
-        //    catch
-        //    {
-        //        return dictionary.ToExtraTranslationArray();
-        //    }
-
-        //    if (suggestions == null)
-        //    {
-        //        return dictionary.ToExtraTranslationArray();
-        //    }
-        //    foreach (JToken suggestion in suggestions)
-        //    {
-        //        if (!suggestion.HasValues)
-        //        {
-        //            continue;
-        //        }
-
-        //        FindWordProperties(suggestion, dictionary);
-        //    }
-        //    _cancellationToken.ThrowIfCancellationRequested();
-
-        //    return dictionary.ToExtraTranslationArray();
-        //}
-
-        private static void FindWordProperties(JToken suggestion, IDictionary<string, List<string>> dictionary)
+        private static void ValidateSuggestions(
+            ExtraTranslation extra,
+            ICollection<ExtraTranslation> finalSuggestions)
         {
-            string key = suggestion[0].ToString();
-
-            List<string> list =
-                (
-                    from item in suggestion[1]
-                    where !string.IsNullOrWhiteSpace(item?.ToString())
-                    select item.ToString()
-                    ).ToList();
-
-            dictionary.Add(key, list);
+            extra.Name = extra.Name.CapitalizeFirstLetter();
+            if (finalSuggestions.All(final => final.Name != extra.Name))
+            {
+                finalSuggestions.Add(extra);
+            }
+//            else
+//            {
+//                if (!finalSuggestions.Any(final => final.Words.Count() >= extra.Words.Count()))
+//                {
+//                    return;
+//                }
+//                ExtraTranslation prev = finalSuggestions.FirstOrDefault(final => final.Name == extra.Name);
+//                if (prev == null)
+//                {
+//                    return;
+//                }
+//                prev.Words = prev.Words
+//                    .Concat(extra.Words)
+//                    .Distinct()
+//                    .ToArray();
+//            }
         }
-
-        //public string[] ExtractSeeAlso(JToken json)
-        //    => !json.HasValues ? new string[0] : 
     }
 }

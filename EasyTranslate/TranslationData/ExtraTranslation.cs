@@ -1,11 +1,20 @@
-﻿namespace EasyTranslate.TranslationData
+﻿using System.Collections.Generic;
+
+namespace EasyTranslate.TranslationData
 {
     public class ExtraTranslation
     {
-        public TranslationType Type { get; set; }
+        public TranslationType Type { get; }
 
-        public string Name { get; set; }
+        public string Name { get; internal set; }
 
-        public string[] Words { get; set; }
+        public IEnumerable<string> Words { get; internal set; }
+
+        public ExtraTranslation(TranslationType type, string name, IEnumerable<string> words)
+        {
+            Type = type;
+            Name = name;
+            Words = words;
+        }
     }
 }
