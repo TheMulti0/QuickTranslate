@@ -25,7 +25,7 @@ namespace EasyTranslate.Translators
             {
                 _cancellationToken = token;
 
-                string url = await Translationnew UrlBuilder().GetUrl(sequence, targetLanguage);
+                string url = await new UrlBuilder().GetUrl(sequence, targetLanguage);
                 string response = await GetResponseStringAsync(url);
 
                 JToken json = TranslationInfoParser.ExtractJson(response);
