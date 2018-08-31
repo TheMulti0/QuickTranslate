@@ -1,19 +1,19 @@
 # Getting started
-**EasyTranslate** has only one translator one, it's called ``GoogleTranslateClassicTranslator`` which uses the [classic Google Translate webpage](https://translate.google.com/).
-So the first thing you gotta do is to create that translator. 
+**EasyTranslate** has only one translator one, it's called ``GoogleTranslator`` which uses the [classic Google Translate webpage](https://translate.google.com/).
+So the first thing you have got to do is to create that translator. 
  
 ```cs
-ITranslator translator = new GoogleTranslateClassicTranslator();
+ITranslator translator = new GoogleTranslator();
 ```
-Now if you want to translate a word, you've got to create a new ``TranslateWord`` that **its** word property is **your** word / sentence, and specify the language you want to translate it to:
+Now if you want to asynchronously translate a word, you've got to create a new ``TranslationSequence`` that **its** 'sequence' property is the sequence that **you** desire to translate, and specify the language you want to translate to:
 ```cs
-TranslateWord result = translator.Translate(new TranslateWord("Bonjour"), TranslateLanguages.English)
+Task<TranslationSequence> result = await translator.Translate(new TranslationSequence("Bonjour"), TranslateLanguages.English);
 ```
 
-Let's say you want to detect a word / sentences' language, you've got to create a new TranslateWord, specify your word.
-After that, the detect method should return you a ``TranslateWord`` which includes your word, and it's (detected) language!
+Let's say you want to detect a word / sentences' language, you've got to create a new TranslationSequence, specify your word.
+After that, the detect method should return you a ``TranslationSequence`` which includes your word, and it's (detected) language!
 ```cs
-TranslateWord result  = translator.Detect(new TranslateWord("Hello there"));
+Task<TranslationSequence> result  = await translator.Detect(new TranslationSequence("Hello there"));
 ``` 
 
 # More

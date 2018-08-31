@@ -25,7 +25,7 @@ namespace EasyTranslate.Translators
             {
                 _cancellationToken = token;
 
-                string url = await new UrlBuilder().GetUrl(sequence, targetLanguage);
+                string url = await Translationnew UrlBuilder().GetUrl(sequence, targetLanguage);
                 string response = await GetResponseStringAsync(url);
 
                 JToken json = TranslationInfoParser.ExtractJson(response);
@@ -38,6 +38,7 @@ namespace EasyTranslate.Translators
                 }
                 catch
                 {
+                    // ignored
                 }
 
                 var result = new TranslationSequence(resultWord, targetLanguage, description, suggestions);
@@ -77,7 +78,7 @@ namespace EasyTranslate.Translators
                 JToken json = TranslationInfoParser.ExtractJson(response);
                 TranslateLanguages language = TranslationInfoParser.ExtractLanguage(json);
 
-                var result = new TranslationSequence(sequence.Word, language);
+                var result = new TranslationSequence(sequence.Sequence, language);
                 return result;
             }
             catch (Exception e)

@@ -32,7 +32,7 @@ namespace EasyTranslate.Translators
             query["tsel"] = "4";
             query["kc"] = "20";
             query["tk"] = token;
-            query["q"] = sequence.Word;
+            query["q"] = sequence.Sequence;
 
             builder.Query = HttpUtility.UrlDecode(query.ToString());
             return builder.Uri.ToString();
@@ -44,7 +44,7 @@ namespace EasyTranslate.Translators
             string tkk = await tkkGenerator.GetTkkAsync();
 
             var tokenGenerator = new TokenGenerator();
-            string token = tokenGenerator.GetToken(sequence.Word, tkk);
+            string token = tokenGenerator.GetToken(sequence.Sequence, tkk);
             return token;
         }
     }

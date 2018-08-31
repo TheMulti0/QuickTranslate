@@ -4,7 +4,7 @@ namespace EasyTranslate.TranslationData
 {
     public class TranslationSequence
     {
-        public string Word { get; }
+        public string Sequence { get; }
 
         public TranslateLanguages? Language { get; }
 
@@ -13,12 +13,12 @@ namespace EasyTranslate.TranslationData
         public IEnumerable<ExtraTranslation> Suggestions { get; }
 
         public TranslationSequence(
-            string word,
+            string sequence,
             TranslateLanguages? language = null,
             IEnumerable<string> description = null,
             IEnumerable<ExtraTranslation> suggestions = null)
         {
-            Word = word;
+            Sequence = sequence;
             Language = language;
             Description = description;
             Suggestions = suggestions;
