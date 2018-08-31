@@ -31,14 +31,13 @@ namespace EasyTranslate.Translators
                 JToken json = TranslationInfoParser.ExtractJson(response);
                 string resultWord = TranslationInfoParser.ExtractWord(json);
 
-                IEnumerable<ExtraTranslation> suggestions = TranslationInfoParser.ExtractSuggestions(json);
-
-                ExtraTranslation descriptionWord = suggestions
-                    .FirstOrDefault(desc => desc.Name == resultWord);
-                IEnumerable<string> description = descriptionWord?.Words;
-                if (descriptionWord != null)
+                (IEnumerable<ExtraTranslation> suggestions, IEnumerable<string> description) = (null, null); 
+                try
                 {
-                    suggestions = suggestions.Skip(1);
+                    (suggestions, description) = GetSuggestions(json, resultWord);
+                }
+                catch
+                {
                 }
 
                 var result = new TranslationSequence(resultWord, targetLanguage, description, suggestions);
@@ -48,6 +47,20 @@ namespace EasyTranslate.Translators
             {
                 throw new TranslationFailedException(e);
             }
+        }
+
+        private static (IEnumerable<ExtraTranslation> suggestions, IEnumerable<string> description) GetSuggestions(JToken json, string resultWord)
+        {
+            IEnumerable<ExtraTranslation> suggestions = TranslationInfoParser.ExtractSuggestions(json);
+
+            ExtraTranslation descriptionWord = suggestions
+                .FirstOrDefault(desc => desc.Name == resultWord);
+            IEnumerable<string> description = descriptionWord?.Words;
+            if (descriptionWord != null)
+            {
+                suggestions = suggestions.Skip(1);
+            }
+            return (suggestions, description);
         }
 
         public async Task<TranslationSequence> DetectAsync(
