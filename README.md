@@ -8,7 +8,7 @@ Check out the [Wiki](https://github.com/TheMulti0/EasyTranslate/wiki/1.-Installi
 
 ## Requirements
 
-For now, the API supports [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard), so it supports all of those slik new frameworks!
+The API supports [.NET Standard 2.0](https://docs.microsoft.com/en-us/dotnet/standard/net-standard), so it will work with all of those slik new frameworks!
 
 ## How does it work
 
