@@ -17,11 +17,11 @@
     <RepositoryUrl>https://github.com/TheMulti0/EasyTranslate</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>Google_Translate Bing EasyTranslate BingTranslator MicrosoftTranslator Translate Google Translator Google-Translate Google Translate Microsoft</PackageTags>
-    <PackageReleaseNotes>Changed names</PackageReleaseNotes>
+    <PackageReleaseNotes>Significantly quicker responses</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>1.5.1</Version>
-    <AssemblyVersion>1.5.1.0</AssemblyVersion>
+    <Version>1.5.2</Version>
+    <AssemblyVersion>1.5.2.0</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebugType>portable</DebugType>
@@ -33,6 +33,6 @@
     </DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
 </Project>

@@ -19,6 +19,7 @@ namespace EasyTranslate.Translators
         Task<TranslationSequence> TranslateAsync(
             TranslationSequence sequence,
             TranslateLanguages targetLanguage,
+            TranslateLanguages? sourceLanguage = null,
             CancellationToken token = default(CancellationToken));
         
         /// <summary>
@@ -31,6 +32,7 @@ namespace EasyTranslate.Translators
         /// <seealso cref="TranslateAsync"/>
         Task<TranslationSequence> DetectAsync(
             TranslationSequence sequence,
+            TranslateLanguages? sourceLanguage = null,
             CancellationToken token = default(CancellationToken));
     }
 }

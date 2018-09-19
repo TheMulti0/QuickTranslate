@@ -19,17 +19,18 @@ namespace EasyTranslate.Translators
         public async Task<TranslationSequence> TranslateAsync(
             TranslationSequence sequence,
             TranslateLanguages targetLanguage,
+            TranslateLanguages? sourceLanguage = null,
             CancellationToken token = default(CancellationToken))
         {
             try
             {
                 _cancellationToken = token;
 
-                string url = await new UrlBuilder().GetUrl(sequence, targetLanguage);
-                string response = await GetResponseStringAsync(url);
+                var url = await new UrlBuilder().GetUrl(sequence, targetLanguage, sourceLanguage);
+                var response = await GetResponseStringAsync(url);
 
                 JToken json = TranslationInfoParser.ExtractJson(response);
-                string resultWord = TranslationInfoParser.ExtractWord(json);
+                var resultWord = TranslationInfoParser.ExtractWord(json);
 
                 (IEnumerable<ExtraTranslation> suggestions, IEnumerable<string> description) = (null, null); 
                 try
@@ -66,13 +67,14 @@ namespace EasyTranslate.Translators
 
         public async Task<TranslationSequence> DetectAsync(
             TranslationSequence sequence,
+            TranslateLanguages? sourceLanguage = null,
             CancellationToken token = default(CancellationToken))
         {
             try
             {
                 _cancellationToken = token;
 
-                string url = await new UrlBuilder().GetUrl(sequence, TranslateLanguages.English);
+                string url = await new UrlBuilder().GetUrl(sequence, TranslateLanguages.English, sourceLanguage);
                 string response = await GetResponseStringAsync(url);
 
                 JToken json = TranslationInfoParser.ExtractJson(response);
