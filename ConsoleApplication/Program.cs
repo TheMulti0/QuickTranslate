@@ -18,9 +18,9 @@ namespace ConsoleApplication
         {
             var tokenSource = new CancellationTokenSource();
             CancellationToken cancellationToken = tokenSource.Token;
-            Task<TranslationSequence> a = translator.TranslateAsync(new TranslationSequence("שלום"), TranslateLanguages.English, cancellationToken);
+            Task<TranslationSequence> a = translator.TranslateAsync(new TranslationSequence("שלום"), TranslateLanguages.English, token:cancellationToken);
             Console.WriteLine(a.Result.Sequence);
-            TranslationSequence c = await translator.TranslateAsync(new TranslationSequence("שלום! באמת"), TranslateLanguages.English, cancellationToken);
+            TranslationSequence c = await translator.TranslateAsync(new TranslationSequence("שלום! באמת"), TranslateLanguages.English, token:cancellationToken);
             Console.WriteLine(c.Sequence);
             Console.ReadLine();
         }
