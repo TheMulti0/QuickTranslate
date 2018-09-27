@@ -1,6 +1,7 @@
 # EasyTranslate
 
 This is an unofficial translate/detect API written in C#. <br/>
+This API is violates the Google Translate terms of service, hence why it is discontinued, but it is still avaliable to use for anyone on NuGet, install on your own risk.
 
 ## How to use it
 
