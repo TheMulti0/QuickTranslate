@@ -1,11 +1,11 @@
-# EasyTranslate
+# QuickTranslate
 
 This is an unofficial translate/detect API written in C#. <br/>
 This API is violates the Google Translate terms of service, hence why it is discontinued, but it is still avaliable to use for anyone on NuGet, install on your own risk.
 
 ## How to use it
 
-Check out the [Wiki](https://github.com/TheMulti0/EasyTranslate/wiki/1.-Installing-the-package) of this repo!
+Check out the [Wiki](https://github.com/TheMulti0/QuickTranslate/wiki/1.-Installing-the-package) of this repo!
 
 ## Requirements
 
@@ -21,7 +21,7 @@ This API is very quick, it uses the same engine that the website itself does, an
  
 ## Release
 
-EasyTranslate is officialy released! [Check it out!](http://nuget.org/packages/TheMulti0.EasyTranslate/)
+EasyTranslate is officialy released! [Check it out!](http://nuget.org/packages/TheMulti0.QuickTranslate/)
 
 ## Contributing
 
