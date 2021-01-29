@@ -21,7 +21,7 @@ This API is very quick, it uses the same engine that the website itself does, an
  
 ## Release
 
-EasyTranslate is officialy released! [Check it out!](http://nuget.org/packages/TheMulti0.QuickTranslate/)
+QuickTranslate is officialy released! [Check it out!](http://nuget.org/packages/TheMulti0.QuickTranslate/)
 
 ## Contributing
 
