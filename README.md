@@ -1,7 +1,7 @@
 # QuickTranslate
 
 This is an unofficial translate/detect API written in C#. <br/>
-This API is violates the Google Translate terms of service, hence why it is discontinued, but it is still avaliable to use for anyone on NuGet, install on your own risk.
+This API is violates the Google Translate terms of service, hence why it is discontinued, use on your own risk and responsibility.
 
 ## How to use it
 
@@ -18,10 +18,6 @@ It uses [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json). <br/>
 This API is very quick, it uses the same engine that the website itself does, and the official Google Translate API uses.
 [Official API](https://cloud.google.com/translate/)
 ([Google Cloud Platform](https://cloud.google.com/)).<br/>
- 
-## Release
-
-QuickTranslate is officialy released! [Check it out!](http://nuget.org/packages/TheMulti0.QuickTranslate/)
 
 ## Contributing
 
